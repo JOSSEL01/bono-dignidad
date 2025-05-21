@@ -14,7 +14,7 @@ Un sistema basado en Java para la gestión de bonos sociales, incluyendo adminis
 - Git para control de versiones
 
 ## Instalación
-1. Clona el repositorio: `git clone https://github.com/tu-usuario/bono-dignidad.git`
+1. Clona el repositorio: `https://github.com/JOSSEL01/bono-dignidad`
 2. Compila y ejecuta: `javac src/Dignidad/*.java && java -cp src Dignidad.Main`
 
 ## Licencia

@@ -16,7 +16,7 @@ Un sistema basado en Java para la gestión de bonos sociales, incluyendo adminis
 - **Git**: Para clonar el repositorio.
   - Verifica con: `git --version`.
   - Descarga desde [git-scm.com](https://git-scm.com/downloads).
-- Opcional: Un IDE como NetBeans, IntelliJ IDEA o Eclipse para facilitar el desarrollo.
+- Opcional: Un IDE como NetBeans, IntelliJ IDEA, VSCode o Eclipse para facilitar el desarrollo.
 
 ## Instalación y ejecución
 Sigue estos pasos para clonar, compilar y ejecutar el proyecto:

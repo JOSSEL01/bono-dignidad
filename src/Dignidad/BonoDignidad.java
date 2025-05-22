@@ -1,166 +1,93 @@
 package Dignidad;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BonoDignidad {
     private String nombretipo;
     private String fechaIni;
     private String fechaFin;
-    private ArrayList<SolicitudBono> regisSoli;
-    private ArrayList<PagoBono> regisPago;
-    private Scanner lec;
-
-    public BonoDignidad(String nombretipo, String fechaIni, String fechaFin, Scanner lec) {
-        this.nombretipo = nombretipo;
-        this.fechaIni = fechaIni;
-        this.fechaFin = fechaFin;
-        this.regisSoli = new ArrayList<>();
-        this.regisPago = new ArrayList<>();
-        this.lec = lec;
-    }
+    private double monto;
+    private SolicitudBono[] regisSoli;
+    private PagoBono[] regisPago;
+    private int numSolicitudes;
+    private int numPagos;
+    private static final int MAX_REGISTROS = 100;
 
     public BonoDignidad() {
-        this.regisSoli = new ArrayList<>();
-        this.regisPago = new ArrayList<>();
+        this.regisSoli = new SolicitudBono[MAX_REGISTROS];
+        this.regisPago = new PagoBono[MAX_REGISTROS];
+        this.numSolicitudes = 0;
+        this.numPagos = 0;
     }
 
-    public String getNombretipo() {
-        return nombretipo;
-    }
-
-    public void setNombretipo(String nombretipo) {
+    public BonoDignidad(String nombretipo, String fechaIni, String fechaFin, double monto) {
         this.nombretipo = nombretipo;
-    }
-
-    public String getFechaIni() {
-        return fechaIni;
-    }
-
-    public void setFechaIni(String fechaIni) {
         this.fechaIni = fechaIni;
-    }
-
-    public String getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(String fechaFin) {
         this.fechaFin = fechaFin;
+        this.monto = monto;
+        this.regisSoli = new SolicitudBono[MAX_REGISTROS];
+        this.regisPago = new PagoBono[MAX_REGISTROS];
+        this.numSolicitudes = 0;
+        this.numPagos = 0;
     }
 
-    public ArrayList<SolicitudBono> getRegisSoli() {
-        return regisSoli;
-    }
+    public void leer(Beneficiario[] beneficiarios, int numBeneficiarios, Scanner scanner) {
+        System.out.print("Ingrese el tipo de bono: ");
+        this.nombretipo = scanner.nextLine().trim();
+        System.out.print("Ingrese la fecha de inicio (dd/mm/yyyy): ");
+        this.fechaIni = scanner.nextLine().trim();
+        System.out.print("Ingrese la fecha de fin (dd/mm/yyyy): ");
+        this.fechaFin = scanner.nextLine().trim();
+        System.out.print("Ingrese el monto: ");
+        this.monto = Double.parseDouble(scanner.nextLine().trim());
 
-    public void setRegisSoli(ArrayList<SolicitudBono> regisSoli) {
-        this.regisSoli = regisSoli;
-    }
-
-    public ArrayList<PagoBono> getRegisPago() {
-        return regisPago;
-    }
-
-    public void setRegisPago(ArrayList<PagoBono> regisPago) {
-        this.regisPago = regisPago;
-    }
-
-    public void leer(ArrayList<Beneficiario> beneficiarios) {
-        System.out.println("\n--- Registro de Bono ---");
-        System.out.print("Nombre del tipo de bono: ");
-        this.nombretipo = lec.nextLine();
-        System.out.print("Fecha de Inicio (DD/MM/AAAA): ");
-        this.fechaIni = lec.nextLine();
-        System.out.print("Fecha de Fin (DD/MM/AAAA): ");
-        this.fechaFin = lec.nextLine();
-
-        System.out.print("¿Desea registrar una solicitud para este bono? (S/N): ");
-        if (lec.nextLine().trim().toUpperCase().startsWith("S")) {
-            if (beneficiarios.isEmpty()) {
-                System.out.println("No hay beneficiarios registrados para asignar una solicitud.");
-                return;
-            }
+        // Si hay beneficiarios, permitir asociar uno al bono
+        if (numBeneficiarios > 0) {
             System.out.println("Lista de Beneficiarios:");
-            for (int i = 0; i < beneficiarios.size(); i++) {
-                System.out.println((i + 1) + ". " + beneficiarios.get(i).getNombre() + " (CI: " + beneficiarios.get(i).getCi() + ")");
+            for (int i = 0; i < numBeneficiarios; i++) {
+                System.out.println((i + 1) + ". " + beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
             }
-            System.out.print("Seleccione el número del beneficiario: ");
-            try {
-                int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-                if (indice >= 0 && indice < beneficiarios.size()) {
-                    Beneficiario beneficiario = beneficiarios.get(indice);
-                    SolicitudBono solicitud = new SolicitudBono();
-                    solicitud.leer();
-                    solicitud.setBeneficiario(beneficiario);
-                    regisSoli.add(solicitud);
-                    beneficiario.getSolicitudes().add(solicitud);
-
-                    System.out.print("¿Desea registrar un pago para esta solicitud? (S/N): ");
-                    if (lec.nextLine().trim().toUpperCase().startsWith("S")) {
-                        PagoBono pago = new PagoBono();
-                        pago.leer();
-                        pago.setSolicitud(solicitud);
-                        regisPago.add(pago);
-                        solicitud.setPagada(true);
-                    }
-                } else {
-                    System.out.println("Índice inválido.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida.");
+            System.out.print("Seleccione un beneficiario para asociar al bono (0 para no asociar): ");
+            int indice = Integer.parseInt(scanner.nextLine().trim());
+            if (indice > 0 && indice <= numBeneficiarios) {
+                SolicitudBono solicitud = new SolicitudBono(this.fechaIni, "Aprobada", beneficiarios[indice - 1]);
+                agregarSolicitud(solicitud);
             }
         }
     }
 
     public void mostrar() {
-        System.out.println("Tipo de Bono: " + nombretipo);
-        System.out.println("Fecha de Inicio: " + fechaIni);
-        System.out.println("Fecha de Fin: " + fechaFin);
-        if (!regisSoli.isEmpty()) {
-            System.out.println("Solicitudes:");
-            for (SolicitudBono solicitud : regisSoli) {
-                solicitud.mostrar();
-            }
-        }
-        if (!regisPago.isEmpty()) {
-            System.out.println("Pagos:");
-            for (PagoBono pago : regisPago) {
-                pago.mostrar();
-            }
-        }
+        System.out.println("Tipo: " + nombretipo);
+        System.out.println("Fecha Inicio: " + fechaIni);
+        System.out.println("Fecha Fin: " + fechaFin);
+        System.out.println("Monto: " + monto);
     }
 
-    public String toCSV() {
-        return String.join(",",
-                escapeCSV(nombretipo),
-                escapeCSV(fechaIni),
-                escapeCSV(fechaFin));
-    }
-
-    public static BonoDignidad fromCSV(String csv, ArrayList<Beneficiario> beneficiarios) {
-        String[] parts = csv.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-        if (parts.length < 3) return null;
-
-        String nombretipo = unescapeCSV(parts[0]);
-        String fechaIni = unescapeCSV(parts[1]);
-        String fechaFin = unescapeCSV(parts[2]);
-
-        return new BonoDignidad(nombretipo, fechaIni, fechaFin, null);
-    }
-
-    private static String escapeCSV(String field) {
-        if (field == null) return "";
-        if (field.contains(",") || field.contains("\"")) {
-            return "\"" + field.replace("\"", "\"\"") + "\"";
+    // Getters y setters
+    public String getNombretipo() { return nombretipo; }
+    public void setNombretipo(String nombretipo) { this.nombretipo = nombretipo; }
+    public String getFechaIni() { return fechaIni; }
+    public void setFechaIni(String fechaIni) { this.fechaIni = fechaIni; }
+    public String getFechaFin() { return fechaFin; }
+    public void setFechaFin(String fechaFin) { this.fechaFin = fechaFin; }
+    public double getMonto() { return monto; }
+    public void setMonto(double monto) { this.monto = monto; }
+    public SolicitudBono[] getRegisSoli() { return regisSoli; }
+    public int getNumSolicitudes() { return numSolicitudes; }
+    public void setNumSolicitudes(int numSolicitudes) { this.numSolicitudes = numSolicitudes; }
+    public PagoBono[] getRegisPago() { return regisPago; }
+    public int getNumPagos() { return numPagos; }
+    public void setNumPagos(int numPagos) { this.numPagos = numPagos; }
+    public void agregarSolicitud(SolicitudBono solicitud) {
+        if (numSolicitudes < MAX_REGISTROS) {
+            regisSoli[numSolicitudes] = solicitud;
+            numSolicitudes++;
         }
-        return field;
     }
-
-    private static String unescapeCSV(String field) {
-        if (field == null) return "";
-        if (field.startsWith("\"") && field.endsWith("\"")) {
-            return field.substring(1, field.length() - 1).replace("\"\"", "\"");
+    public void agregarPago(PagoBono pago) {
+        if (numPagos < MAX_REGISTROS) {
+            regisPago[numPagos] = pago;
+            numPagos++;
         }
-        return field;
     }
 }

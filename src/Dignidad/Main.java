@@ -1,18 +1,16 @@
 package Dignidad;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
-    private static ArrayList<BonoDignidad> bonos;
-    private static ArrayList<Beneficiario> beneficiarios;
-    private static ArrayList<Administrador> administradores;
+    private static final int MAX_REGISTROS = 100;
+    private static BonoDignidad[] bonos;
+    private static Beneficiario[] beneficiarios;
+    private static Administrador[] administradores;
+    private static int[] numBonos;
+    private static int[] numBeneficiarios;
+    private static int[] numAdministradores;
     private static Scanner lec = new Scanner(System.in);
-    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_CYAN = "\u001B[36m";
@@ -21,11 +19,17 @@ public class Main {
     private static final String ANSI_BLUE = "\u001B[34m";
 
     public static void main(String[] args) {
-        bonos = new ArrayList<>();
-        beneficiarios = new ArrayList<>();
-        administradores = new ArrayList<>();
+        bonos = new BonoDignidad[MAX_REGISTROS];
+        beneficiarios = new Beneficiario[MAX_REGISTROS];
+        administradores = new Administrador[MAX_REGISTROS];
+        numBonos = new int[1];
+        numBeneficiarios = new int[1];
+        numAdministradores = new int[1];
+        numBonos[0] = 0;
+        numBeneficiarios[0] = 0;
+        numAdministradores[0] = 0;
 
-        Persistencia.cargarDatos(bonos, beneficiarios, administradores);
+        Persistencia.cargarDatos(bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
 
         System.out.println(ANSI_CYAN + "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" + ANSI_RESET);
         System.out.println(ANSI_CYAN + "┃     BIENVENIDO AL SISTEMA BONO DIGNIDAD       ┃" + ANSI_RESET);
@@ -45,7 +49,7 @@ public class Main {
             System.out.println(ANSI_YELLOW + "Opción no válida. El programa se cerrará." + ANSI_RESET);
         }
 
-        Persistencia.guardarDatos(bonos, beneficiarios, administradores);
+        Persistencia.guardarDatos(bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
         lec.close();
     }
 
@@ -96,11 +100,11 @@ public class Main {
                 case 11:
                     listarBeneficiariosConPagos();
                     break;
-                case 13:
-                    borrarRegistro();
-                    break;
                 case 12:
                     System.out.println(ANSI_YELLOW + "Saliendo del sistema..." + ANSI_RESET);
+                    break;
+                case 13:
+                    borrarRegistro();
                     break;
                 default:
                     System.out.println(ANSI_YELLOW + "Opción no válida. Intente de nuevo." + ANSI_RESET);
@@ -111,7 +115,7 @@ public class Main {
     private static void ejecutarModoGrafico() {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BonoDignidadGUI(bonos, beneficiarios, administradores).setVisible(true);
+                new BonoDignidadGUI(bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores).setVisible(true);
             }
         });
     }
@@ -131,8 +135,8 @@ public class Main {
         System.out.println(ANSI_GREEN + "┃ 9. Verificar Solicitudes Pagadas   ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 10. Fechas de Bono por Beneficiario┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 11. Beneficiarios con Pagos        ┃" + ANSI_RESET);
-        System.out.println(ANSI_GREEN + "┃ 13. Borrar Registro                ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 12. Salir                          ┃" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "┃ 13. Borrar Registro                ┃" + ANSI_RESET);
         System.out.println(ANSI_CYAN + "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" + ANSI_RESET);
         System.out.print(ANSI_BLUE + "Seleccione una opción: " + ANSI_RESET);
     }
@@ -146,78 +150,108 @@ public class Main {
     }
 
     private static void registrarBono() {
+        if (numBonos[0] >= MAX_REGISTROS) {
+            System.out.println(ANSI_YELLOW + "No se pueden agregar más bonos, límite alcanzado." + ANSI_RESET);
+            return;
+        }
         BonoDignidad bono = new BonoDignidad();
-        bono.leer(beneficiarios);
-        bonos.add(bono);
+        bono.leer(beneficiarios, numBeneficiarios[0], lec);
+        bonos[numBonos[0]] = bono;
+        numBonos[0]++;
         System.out.println(ANSI_GREEN + "Bono registrado exitosamente." + ANSI_RESET);
     }
 
     private static void registrarBeneficiario() {
         System.out.println(ANSI_YELLOW + "\n--- Registro de Beneficiario ---" + ANSI_RESET);
-        Beneficiario beneficiario = new Beneficiario(0, "", "", "", "", null, "", "", lec);
-        beneficiario.leer();
-        beneficiarios.add(beneficiario);
+        if (numBeneficiarios[0] >= MAX_REGISTROS) {
+            System.out.println(ANSI_YELLOW + "No se pueden agregar más beneficiarios, límite alcanzado." + ANSI_RESET);
+            return;
+        }
+        Beneficiario beneficiario = new Beneficiario();
+        beneficiario.leer(lec);
+        beneficiarios[numBeneficiarios[0]] = beneficiario;
+        numBeneficiarios[0]++;
         System.out.println(ANSI_GREEN + "Beneficiario registrado exitosamente." + ANSI_RESET);
     }
 
     private static void registrarAdministrador() {
         System.out.println(ANSI_YELLOW + "\n--- Registro de Administrador ---" + ANSI_RESET);
+        if (numAdministradores[0] >= MAX_REGISTROS) {
+            System.out.println(ANSI_YELLOW + "No se pueden agregar más administradores, límite alcanzado." + ANSI_RESET);
+            return;
+        }
         Administrador administrador = new Administrador();
-        administrador.leer();
-        administradores.add(administrador);
+        administrador.leer(lec);
+        administradores[numAdministradores[0]] = administrador;
+        numAdministradores[0]++;
         System.out.println(ANSI_GREEN + "Administrador registrado exitosamente." + ANSI_RESET);
     }
 
     private static void mostrarBonos() {
-        if (bonos.isEmpty()) {
+        if (numBonos[0] == 0) {
             System.out.println(ANSI_YELLOW + "\nNo hay bonos registrados." + ANSI_RESET);
             return;
         }
-        for (int i = 0; i < bonos.size(); i++) {
+        for (int i = 0; i < numBonos[0]; i++) {
             System.out.println(ANSI_CYAN + "\nBono #" + (i + 1) + ANSI_RESET);
-            bonos.get(i).mostrar();
+            bonos[i].mostrar();
         }
     }
 
     private static void mostrarBeneficiarios() {
-        if (beneficiarios.isEmpty()) {
+        if (numBeneficiarios nöö[0] == 0) {
             System.out.println(ANSI_YELLOW + "\nNo hay beneficiarios registrados." + ANSI_RESET);
             return;
         }
-        for (int i = 0; i < beneficiarios.size(); i++) {
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
             System.out.println(ANSI_CYAN + "\nBeneficiario #" + (i + 1) + ANSI_RESET);
-            beneficiarios.get(i).mostrar();
+            beneficiarios[i].mostrar();
         }
     }
 
     private static void mostrarAdministradores() {
-        if (administradores.isEmpty()) {
+        if (numAdministradores[0] == 0) {
             System.out.println(ANSI_YELLOW + "\nNo hay administradores registrados." + ANSI_RESET);
             return;
         }
-        for (int i = 0; i < administradores.size(); i++) {
+        for (int i = 0; i < numAdministradores[0]; i++) {
             System.out.println(ANSI_CYAN + "\nAdministrador #" + (i + 1) + ANSI_RESET);
-            administradores.get(i).mostrar();
+            administradores[i].mostrar();
         }
     }
 
     private static void mostrarBeneficiariosPorTipoDiscapacidad() {
-        if (beneficiarios.isEmpty()) {
+        if (numBeneficiarios[0] == 0) {
             System.out.println(ANSI_YELLOW + "\nNo hay beneficiarios registrados." + ANSI_RESET);
             return;
         }
 
-        HashMap<String, Integer> conteoDiscapacidades = new HashMap<>();
-        for (Beneficiario beneficiario : beneficiarios) {
-            String tipo = beneficiario.getTipodiscapacidad();
-            conteoDiscapacidades.put(tipo, conteoDiscapacidades.getOrDefault(tipo, 0) + 1);
+        int[] conteoDiscapacidades = new int[10]; // Asumimos un límite de 10 tipos de discapacidad diferentes
+        String[] tipos = new String[10];
+        int tiposCount = 0;
+
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            String tipo = beneficiarios[i].getTipodiscapacidad();
+            boolean encontrado = false;
+            for (int j = 0; j < tiposCount; j++) {
+                if (tipos[j].equals(tipo)) {
+                    conteoDiscapacidades[j]++;
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (!encontrado && tiposCount < 10) {
+                tipos[tiposCount] = tipo;
+                conteoDiscapacidades[tiposCount]++;
+                tiposCount++;
+            }
         }
 
         System.out.println(ANSI_CYAN + "\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" + ANSI_RESET);
         System.out.println(ANSI_CYAN + "┃  BENEFICIARIOS POR TIPO DISCAPACIDAD ┃" + ANSI_RESET);
         System.out.println(ANSI_CYAN + "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫" + ANSI_RESET);
-        for (String tipo : conteoDiscapacidades.keySet()) {
-            System.out.println("┃ " + tipo + ": " + conteoDiscapacidades.get(tipo) + " beneficiarios");
+        for (int i = 0; i < tiposCount; i++) {
+            System.out.println("┃ " + tipos[i] + ": " + conteoDiscapacidades[i] + " beneficiarios");
         }
         System.out.println(ANSI_CYAN + "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" + ANSI_RESET);
     }
@@ -228,26 +262,23 @@ public class Main {
         System.out.print(ANSI_BLUE + "Ingrese la fecha de fin del período (DD/MM/AAAA): " + ANSI_RESET);
         String fechaFinStr = lec.nextLine().trim();
 
-        LocalDate fechaInicio, fechaFin;
-        try {
-            fechaInicio = LocalDate.parse(fechaInicioStr, FORMATO_FECHA);
-            fechaFin = LocalDate.parse(fechaFinStr, FORMATO_FECHA);
-        } catch (DateTimeParseException e) {
+        // Validar formato básico de las fechas (dd/MM/yyyy)
+        if (!validarFormatoFecha(fechaInicioStr) || !validarFormatoFecha(fechaFinStr)) {
             System.out.println(ANSI_YELLOW + "Formato de fecha inválido. Use DD/MM/AAAA." + ANSI_RESET);
             return;
         }
 
         double montoTotal = 0.0;
-        for (BonoDignidad bono : bonos) {
-            for (PagoBono pago : bono.getRegisPago()) {
-                try {
-                    LocalDate fechaPago = LocalDate.parse(pago.getFechaPago(), FORMATO_FECHA);
-                    if ((fechaPago.isEqual(fechaInicio) || fechaPago.isAfter(fechaInicio)) &&
-                        (fechaPago.isEqual(fechaFin) || fechaPago.isBefore(fechaFin))) {
-                        montoTotal += pago.getMonto();
-                    }
-                } catch (DateTimeParseException e) {
-                    System.out.println(ANSI_YELLOW + "Fecha de pago inválida: " + pago.getFechaPago() + ANSI_RESET);
+        for (int i = 0; i < numBonos[0]; i++) {
+            for (int j = 0; j < bonos[i].getNumPagos(); j++) {
+                String fechaPago = bonos[i].getRegisPago()[j].getFechaPago();
+                if (!validarFormatoFecha(fechaPago)) {
+                    System.out.println(ANSI_YELLOW + "Fecha de pago inválida: " + fechaPago + ANSI_RESET);
+                    continue;
+                }
+                // Comparar fechas como cadenas
+                if (fechaEsDentroDelRango(fechaPago, fechaInicioStr, fechaFinStr)) {
+                    montoTotal += bonos[i].getRegisPago()[j].getMonto();
                 }
             }
         }
@@ -260,8 +291,40 @@ public class Main {
         System.out.println(ANSI_CYAN + "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" + ANSI_RESET);
     }
 
+    // Método para validar el formato básico de la fecha (dd/MM/yyyy)
+    private static boolean validarFormatoFecha(String fecha) {
+        if (fecha == null || !fecha.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            return false;
+        }
+        String[] partes = fecha.split("/");
+        int dia = Integer.parseInt(partes[0]);
+        int mes = Integer.parseInt(partes[1]);
+        int anio = Integer.parseInt(partes[2]);
+        return dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && anio >= 1900 && anio <= 9999;
+    }
+
+    // Método para comparar fechas como cadenas
+    private static boolean fechaEsDentroDelRango(String fechaPago, String fechaInicio, String fechaFin) {
+        // Convertir fechas a un valor comparable (por ejemplo, AAAAMMDD)
+        long valorFechaPago = convertirFechaAValor(fechaPago);
+        long valorFechaInicio = convertirFechaAValor(fechaInicio);
+        long valorFechaFin = convertirFechaAValor(fechaFin);
+
+        // Verificar si fechaPago está dentro del rango [fechaInicio, fechaFin]
+        return valorFechaPago >= valorFechaInicio && valorFechaPago <= valorFechaFin;
+    }
+
+    // Método para convertir una fecha en formato dd/MM/yyyy a un valor numérico comparable
+    private static long convertirFechaAValor(String fecha) {
+        String[] partes = fecha.split("/");
+        int dia = Integer.parseInt(partes[0]);
+        int mes = Integer.parseInt(partes[1]);
+        int anio = Integer.parseInt(partes[2]);
+        return anio * 10000L + mes * 100L + dia; // Formato AAAAMMDD
+    }
+
     private static void verificarSolicitudesProcesadas() {
-        if (bonos.isEmpty()) {
+        if (numBonos[0] == 0) {
             System.out.println(ANSI_YELLOW + "\nNo hay bonos registrados." + ANSI_RESET);
             return;
         }
@@ -269,9 +332,10 @@ public class Main {
         System.out.println(ANSI_CYAN + "\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" + ANSI_RESET);
         System.out.println(ANSI_CYAN + "┃     VERIFICACIÓN DE SOLICITUDES     ┃" + ANSI_RESET);
         System.out.println(ANSI_CYAN + "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫" + ANSI_RESET);
-        for (BonoDignidad bono : bonos) {
-            System.out.println("┃ Bono: " + bono.getNombretipo());
-            for (SolicitudBono solicitud : bono.getRegisSoli()) {
+        for (int i = 0; i < numBonos[0]; i++) {
+            System.out.println("┃ Bono: " + bonos[i].getNombretipo());
+            for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
+                SolicitudBono solicitud = bonos[i].getRegisSoli()[j];
                 System.out.println("┃ - Fecha: " + solicitud.getFechaSolicitud());
                 System.out.println("┃   Beneficiario: " + (solicitud.getBeneficiario() != null ? solicitud.getBeneficiario().getNombre() : "No asignado"));
                 System.out.println("┃   Estado: " + solicitud.getEstado());
@@ -282,31 +346,31 @@ public class Main {
     }
 
     private static void mostrarFechasBonoBeneficiario() {
-        if (beneficiarios.isEmpty()) {
+        if (numBeneficiarios[0] == 0) {
             System.out.println(ANSI_YELLOW + "\nNo hay beneficiarios registrados." + ANSI_RESET);
             return;
         }
 
         System.out.println(ANSI_YELLOW + "\n--- Seleccione un Beneficiario ---" + ANSI_RESET);
-        for (int i = 0; i < beneficiarios.size(); i++) {
-            System.out.println((i + 1) + ". " + beneficiarios.get(i).getNombre() + " (CI: " + beneficiarios.get(i).getCi() + ")");
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            System.out.println((i + 1) + ". " + beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
         }
-        System.out.print("Ingrese el número del beneficiario: ");
+        System.out.print(ANSI_BLUE + "Ingrese el número del beneficiario: " + ANSI_RESET);
         try {
             int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-            if (indice >= 0 && indice < beneficiarios.size()) {
-                Beneficiario beneficiario = beneficiarios.get(indice);
+            if (indice >= 0 && indice < numBeneficiarios[0]) {
+                Beneficiario beneficiario = beneficiarios[indice];
                 System.out.println(ANSI_CYAN + "\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" + ANSI_RESET);
                 System.out.println(ANSI_CYAN + "┃       FECHAS DE BONOS               ┃" + ANSI_RESET);
                 System.out.println(ANSI_CYAN + "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫" + ANSI_RESET);
                 System.out.println("┃ Beneficiario: " + beneficiario.getNombre());
                 boolean tieneBono = false;
-                for (BonoDignidad bono : bonos) {
-                    for (SolicitudBono solicitud : bono.getRegisSoli()) {
-                        if (solicitud.getBeneficiario() == beneficiario) {
-                            System.out.println("┃ - Bono: " + bono.getNombretipo());
-                            System.out.println("┃   Inicio: " + bono.getFechaIni());
-                            System.out.println("┃   Fin: " + bono.getFechaFin());
+                for (int i = 0; i < numBonos[0]; i++) {
+                    for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
+                        if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiario) {
+                            System.out.println("┃ - Bono: " + bonos[i].getNombretipo());
+                            System.out.println("┃   Inicio: " + bonos[i].getFechaIni());
+                            System.out.println("┃   Fin: " + bonos[i].getFechaFin());
                             tieneBono = true;
                         }
                     }
@@ -328,12 +392,14 @@ public class Main {
         System.out.println(ANSI_CYAN + "┃    BENEFICIARIOS CON PAGOS          ┃" + ANSI_RESET);
         System.out.println(ANSI_CYAN + "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫" + ANSI_RESET);
         boolean hayPagos = false;
-        for (Beneficiario beneficiario : beneficiarios) {
-            for (SolicitudBono solicitud : beneficiario.getSolicitudes()) {
-                if (solicitud.isPagada()) {
-                    System.out.println("┃ - " + beneficiario.getNombre() + " (CI: " + beneficiario.getCi() + ")");
-                    hayPagos = true;
-                    break;
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            for (int j = 0; j < numBonos[0]; j++) {
+                for (int k = 0; k < bonos[j].getNumPagos(); k++) {
+                    if (bonos[j].getRegisPago()[k].getSolicitud().getBeneficiario() == beneficiarios[i]) {
+                        System.out.println("┃ - " + beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
+                        hayPagos = true;
+                        break;
+                    }
                 }
             }
         }
@@ -353,7 +419,7 @@ public class Main {
         int tipo = obtenerOpcion();
         switch (tipo) {
             case 1:
-                if (bonos.isEmpty()) {
+                if (numBonos[0] == 0) {
                     System.out.println(ANSI_YELLOW + "No hay bonos registrados para borrar." + ANSI_RESET);
                     return;
                 }
@@ -361,13 +427,15 @@ public class Main {
                 System.out.print(ANSI_BLUE + "Ingrese el número del bono a borrar: " + ANSI_RESET);
                 try {
                     int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-                    if (indice >= 0 && indice < bonos.size()) {
+                    if (indice >= 0 && indice < numBonos[0]) {
                         System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este bono? (S/N): " + ANSI_RESET);
                         String confirmacion = lec.nextLine().trim().toUpperCase();
                         if (confirmacion.startsWith("S")) {
-                            BonoDignidad bono = bonos.get(indice);
-                            
-                            bonos.remove(indice);
+                            for (int i = indice; i < numBonos[0] - 1; i++) {
+                                bonos[i] = bonos[i + 1];
+                            }
+                            bonos[numBonos[0] - 1] = null;
+                            numBonos[0]--;
                             System.out.println(ANSI_GREEN + "Bono y datos asociados eliminados exitosamente." + ANSI_RESET);
                         } else {
                             System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
@@ -380,7 +448,7 @@ public class Main {
                 }
                 break;
             case 2:
-                if (beneficiarios.isEmpty()) {
+                if (numBeneficiarios[0] == 0) {
                     System.out.println(ANSI_YELLOW + "No hay beneficiarios registrados para borrar." + ANSI_RESET);
                     return;
                 }
@@ -388,16 +456,26 @@ public class Main {
                 System.out.print(ANSI_BLUE + "Ingrese el número del beneficiario a borrar: " + ANSI_RESET);
                 try {
                     int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-                    if (indice >= 0 && indice < beneficiarios.size()) {
+                    if (indice >= 0 && indice < numBeneficiarios[0]) {
                         System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este beneficiario? (S/N): " + ANSI_RESET);
                         String confirmacion = lec.nextLine().trim().toUpperCase();
                         if (confirmacion.startsWith("S")) {
-                            Beneficiario beneficiario = beneficiarios.get(indice);
-                            
-                            for (BonoDignidad bono : bonos) {
-                                bono.getRegisSoli().removeIf(s -> s.getBeneficiario() == beneficiario);
+                            for (int i = 0; i < numBonos[0]; i++) {
+                                for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
+                                    if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiarios[indice]) {
+                                        for (int k = j; k < bonos[i].getNumSolicitudes() - 1; k++) {
+                                            bonos[i].getRegisSoli()[k] = bonos[i].getRegisSoli()[k + 1];
+                                        }
+                                        bonos[i].getRegisSoli()[bonos[i].getNumSolicitudes() - 1] = null;
+                                        bonos[i].setNumSolicitudes(bonos[i].getNumSolicitudes() - 1);
+                                    }
+                                }
                             }
-                            beneficiarios.remove(indice);
+                            for (int i = indice; i < numBeneficiarios[0] - 1; i++) {
+                                beneficiarios[i] = beneficiarios[i + 1];
+                            }
+                            beneficiarios[numBeneficiarios[0] - 1] = null;
+                            numBeneficiarios[0]--;
                             System.out.println(ANSI_GREEN + "Beneficiario y solicitudes asociadas eliminados exitosamente." + ANSI_RESET);
                         } else {
                             System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
@@ -410,7 +488,7 @@ public class Main {
                 }
                 break;
             case 3:
-                if (administradores.isEmpty()) {
+                if (numAdministradores[0] == 0) {
                     System.out.println(ANSI_YELLOW + "No hay administradores registrados para borrar." + ANSI_RESET);
                     return;
                 }
@@ -418,11 +496,15 @@ public class Main {
                 System.out.print(ANSI_BLUE + "Ingrese el número del administrador a borrar: " + ANSI_RESET);
                 try {
                     int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-                    if (indice >= 0 && indice < administradores.size()) {
+                    if (indice >= 0 && indice < numAdministradores[0]) {
                         System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este administrador? (S/N): " + ANSI_RESET);
                         String confirmacion = lec.nextLine().trim().toUpperCase();
                         if (confirmacion.startsWith("S")) {
-                            administradores.remove(indice);
+                            for (int i = indice; i < numAdministradores[0] - 1; i++) {
+                                administradores[i] = administradores[i + 1];
+                            }
+                            administradores[numAdministradores[0] - 1] = null;
+                            numAdministradores[0]--;
                             System.out.println(ANSI_GREEN + "Administrador eliminado exitosamente." + ANSI_RESET);
                         } else {
                             System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);

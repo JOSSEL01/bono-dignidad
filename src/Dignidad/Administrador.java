@@ -1,126 +1,60 @@
 package Dignidad;
 
-import java.util.Scanner;
-
-public class Administrador extends Persona {
+public class Administrador {
     private String id;
     private String cargo;
-    private double contacto;
+    private String contacto;
     private String fecCreCuenta;
-    private Scanner lec;
+    private String nombre;
+    private String ci;
 
-    public Administrador(String id, String cargo, double contacto, String fecCreCuenta, String nombre, String ci) {
-        super(nombre, ci);
+    public Administrador() {}
+
+    public Administrador(String id, String cargo, String contacto, String fecCreCuenta, String nombre, String ci) {
         this.id = id;
         this.cargo = cargo;
         this.contacto = contacto;
         this.fecCreCuenta = fecCreCuenta;
+        this.nombre = nombre;
+        this.ci = ci;
     }
 
-    public Administrador() {
-        super();
+    public void leer(java.util.Scanner scanner) {
+        // Este método se usa solo en modo consola
+        System.out.print("Ingrese el ID: ");
+        this.id = scanner.nextLine().trim();
+        System.out.print("Ingrese el cargo: ");
+        this.cargo = scanner.nextLine().trim();
+        System.out.print("Ingrese el contacto: ");
+        this.contacto = scanner.nextLine().trim();
+        System.out.print("Ingrese la fecha de creación (dd/mm/yyyy): ");
+        this.fecCreCuenta = scanner.nextLine().trim();
+        System.out.print("Ingrese el nombre: ");
+        this.nombre = scanner.nextLine().trim();
+        System.out.print("Ingrese la CI: ");
+        this.ci = scanner.nextLine().trim();
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
-    }
-
-    public double getContacto() {
-        return contacto;
-    }
-
-    public void setContacto(double contacto) {
-        this.contacto = contacto;
-    }
-
-    public String getFecCreCuenta() {
-        return fecCreCuenta;
-    }
-
-    public void setFecCreCuenta(String fecCreCuenta) {
-        this.fecCreCuenta = fecCreCuenta;
-    }
-
-    @Override
-    public void leer() {
-        lec = new Scanner(System.in);
-        System.out.print("ID: ");
-        this.id = lec.nextLine();
-        System.out.print("Cargo: ");
-        this.cargo = lec.nextLine();
-        System.out.print("Contacto: ");
-        this.contacto = Double.parseDouble(lec.nextLine());
-        System.out.print("Fecha de Creación de Cuenta (DD/MM/AAAA): ");
-        this.fecCreCuenta = lec.nextLine();
-        System.out.print("Nombre: ");
-        this.nombre = lec.nextLine();
-        System.out.print("CI: ");
-        this.ci = lec.nextLine();
-    }
-
-    @Override
     public void mostrar() {
         System.out.println("ID: " + id);
         System.out.println("Cargo: " + cargo);
         System.out.println("Contacto: " + contacto);
-        System.out.println("Fecha de Creación: " + fecCreCuenta);
+        System.out.println("Fecha Creación: " + fecCreCuenta);
         System.out.println("Nombre: " + nombre);
         System.out.println("CI: " + ci);
     }
 
-    public String toCSV() {
-        return String.join(",",
-                escapeCSV(id),
-                escapeCSV(cargo),
-                String.valueOf(contacto),
-                escapeCSV(fecCreCuenta),
-                escapeCSV(nombre),
-                escapeCSV(ci));
-    }
-
-    public static Administrador fromCSV(String csv) {
-        String[] parts = csv.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-        if (parts.length < 6) return null;
-
-        try {
-            String id = unescapeCSV(parts[0]);
-            String cargo = unescapeCSV(parts[1]);
-            double contacto = Double.parseDouble(parts[2]);
-            String fecCreCuenta = unescapeCSV(parts[3]);
-            String nombre = unescapeCSV(parts[4]);
-            String ci = unescapeCSV(parts[5]);
-
-            return new Administrador(id, cargo, contacto, fecCreCuenta, nombre, ci);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private static String escapeCSV(String field) {
-        if (field == null) return "";
-        if (field.contains(",") || field.contains("\"")) {
-            return "\"" + field.replace("\"", "\"\"") + "\"";
-        }
-        return field;
-    }
-
-    private static String unescapeCSV(String field) {
-        if (field == null) return "";
-        if (field.startsWith("\"") && field.endsWith("\"")) {
-            return field.substring(1, field.length() - 1).replace("\"\"", "\"");
-        }
-        return field;
-    }
+    // Getters y Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getCargo() { return cargo; }
+    public void setCargo(String cargo) { this.cargo = cargo; }
+    public String getContacto() { return contacto; }
+    public void setContacto(String contacto) { this.contacto = contacto; }
+    public String getFecCreCuenta() { return fecCreCuenta; }
+    public void setFecCreCuenta(String fecCreCuenta) { this.fecCreCuenta = fecCreCuenta; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getCi() { return ci; }
+    public void setCi(String ci) { this.ci = ci; }
 }

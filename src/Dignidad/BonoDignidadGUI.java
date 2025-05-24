@@ -1,7 +1,12 @@
 package Dignidad;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class BonoDignidadGUI extends javax.swing.JFrame {
     private static final int MAX_REGISTROS = 100;
@@ -12,11 +17,37 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
     private Administrador[] administradores;
     private int[] numAdministradores;
 
-    // Declare labels as class fields
+    // Declare Swing components as class fields
+    private JPanel backgroundPanel;
+    private JPanel headerPanel;
     private JLabel lblTitulo;
-    private JLabel lblBonos;
-    private JLabel lblBeneficiarios;
-    private JLabel lblAdministradores;
+    private JTabbedPane tabbedPane;
+    private JPanel bonosPanel;
+    private JScrollPane jScrollPane1;
+    private JTable tablaBonos;
+    private JPanel bonosButtonsPanel;
+    private JButton btnAgregarBono;
+    private JButton btnBorrarBono;
+    private JButton btnRegistrarPago;
+    private JPanel beneficiariosPanel;
+    private JScrollPane jScrollPane2;
+    private JTable tablaBeneficiarios;
+    private JPanel beneficiariosButtonsPanel;
+    private JButton btnAgregarBeneficiario;
+    private JButton btnBorrarBeneficiario;
+    private JPanel administradoresPanel;
+    private JScrollPane jScrollPane3;
+    private JTable tablaAdministradores;
+    private JPanel administradoresButtonsPanel;
+    private JButton btnAgregarAdministrador;
+    private JButton btnBorrarAdministrador;
+    private JPanel reportesPanel;
+    private JButton btnGenerarReporte;
+    private JButton btnBeneficiosPorDiscapacidad;
+    private JButton btnMontoPorPeriodo;
+    private JButton btnVerificarSolicitudes;
+    private JButton btnFechasBonoBeneficiario;
+    private JButton btnMultiplesBonos;
 
     public BonoDignidadGUI(BonoDignidad[] bonos, int[] numBonos, Beneficiario[] beneficiarios, int[] numBeneficiarios, Administrador[] administradores, int[] numAdministradores) {
         this.bonos = bonos;
@@ -31,26 +62,175 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
     }
 
     private void customDesign() {
-        // Fondo gradiente
-        getContentPane().setBackground(new Color(240, 248, 255));
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-                GradientPaint gp = new GradientPaint(0, 0, new Color(135, 206, 235), 0, getHeight(), new Color(240, 248, 255));
-                g2d.setPaint(gp);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
-        panel.setLayout(new BorderLayout());
-        panel.add(getContentPane(), BorderLayout.CENTER);
-        setContentPane(panel);
+        // Fondo degradado moderno
+        backgroundPanel.setOpaque(false);
 
-        // Ajustar fuentes y colores
-        lblTitulo.setForeground(new Color(0, 102, 204));
-        lblBonos.setForeground(new Color(0, 102, 204));
-        lblBeneficiarios.setForeground(new Color(0, 102, 204));
-        lblAdministradores.setForeground(new Color(0, 102, 204));
+        // Estilo del título
+        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 32));
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitulo.setBorder(new EmptyBorder(15, 0, 15, 0));
+
+        // Panel superior para el título con fondo azul oscuro
+        headerPanel.setBackground(new Color(25, 50, 75));
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(20, 40, 60)),
+            new EmptyBorder(0, 0, 10, 0)
+        ));
+
+        // Estilo del JTabbedPane
+        tabbedPane.setBackground(new Color(25, 50, 75));
+        tabbedPane.setForeground(Color.WHITE);
+        tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        tabbedPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        // Estilo de las tablas
+        estilizarTabla(tablaBonos, jScrollPane1);
+        estilizarTabla(tablaBeneficiarios, jScrollPane2);
+        estilizarTabla(tablaAdministradores, jScrollPane3);
+
+        // Estilo de los paneles de las pestañas
+        stylePanel(bonosPanel);
+        stylePanel(beneficiariosPanel);
+        stylePanel(administradoresPanel);
+        stylePanel(reportesPanel);
+
+        // Estilo de los paneles de botones
+        bonosButtonsPanel.setOpaque(false);
+        beneficiariosButtonsPanel.setOpaque(false);
+        administradoresButtonsPanel.setOpaque(false);
+
+        // Estilo de los botones
+        estilizarBoton(btnAgregarBono, new Color(50, 168, 82), "Agregar");
+        estilizarBoton(btnBorrarBono, new Color(235, 64, 52), "Borrar");
+        estilizarBoton(btnRegistrarPago, new Color(50, 168, 82), "Pagar");
+        estilizarBoton(btnAgregarBeneficiario, new Color(50, 168, 82), "Agregar");
+        estilizarBoton(btnBorrarBeneficiario, new Color(235, 64, 52), "Borrar");
+        estilizarBoton(btnAgregarAdministrador, new Color(50, 168, 82), "Agregar");
+        estilizarBoton(btnBorrarAdministrador, new Color(235, 64, 52), "Borrar");
+        estilizarBoton(btnGenerarReporte, new Color(70, 130, 180), "Reporte");
+        estilizarBoton(btnBeneficiosPorDiscapacidad, new Color(70, 130, 180), "Discapacidad");
+        estilizarBoton(btnMontoPorPeriodo, new Color(70, 130, 180), "Período");
+        estilizarBoton(btnVerificarSolicitudes, new Color(70, 130, 180), "Solicitudes");
+        estilizarBoton(btnFechasBonoBeneficiario, new Color(70, 130, 180), "Fechas");
+        estilizarBoton(btnMultiplesBonos, new Color(70, 130, 180), "Múltiples");
+    }
+
+    private void stylePanel(JPanel panel) {
+        panel.setOpaque(true);
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+            BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
+    }
+
+    private void estilizarTabla(JTable tabla, JScrollPane scrollPane) {
+        tabla.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tabla.setRowHeight(30);
+        tabla.setBackground(new Color(245, 245, 245));
+        tabla.setForeground(new Color(40, 40, 40));
+        tabla.setGridColor(new Color(200, 200, 200));
+        tabla.setShowGrid(true);
+
+        // Centrar el texto en las celdas
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < tabla.getColumnCount(); i++) {
+            tabla.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Estilo del encabezado
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setBackground(new Color(25, 50, 75));
+        header.setForeground(Color.WHITE);
+        header.setBorder(BorderFactory.createLineBorder(new Color(20, 40, 60)));
+
+        // Estilo del JScrollPane
+        scrollPane.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createEmptyBorder(5, 5, 5, 5),
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true)
+        ));
+        scrollPane.getViewport().setBackground(new Color(245, 245, 245));
+    }
+
+    private void estilizarBoton(JButton boton, Color colorBase, String tipo) {
+        boton.setBackground(colorBase);
+        boton.setForeground(Color.WHITE);
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        boton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        boton.setFocusPainted(false);
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Efecto de hover
+        Color colorHover;
+        switch (tipo.toLowerCase()) {
+            case "agregar":
+            case "pagar":
+                colorHover = new Color(70, 188, 102);
+                break;
+            case "borrar":
+                colorHover = new Color(255, 84, 72);
+                break;
+            default:
+                colorHover = new Color(90, 150, 200);
+                break;
+        }
+
+        boton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                boton.setBackground(colorHover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                boton.setBackground(colorBase);
+            }
+        });
+
+        // Añadir ícono simulado (puedes reemplazar con imágenes reales)
+        String iconPath;
+        switch (tipo.toLowerCase()) {
+            case "agregar":
+                iconPath = "icons/add.png";
+                break;
+            case "borrar":
+                iconPath = "icons/delete.png";
+                break;
+            case "pagar":
+                iconPath = "icons/pay.png";
+                break;
+            case "reporte":
+                iconPath = "icons/report.png";
+                break;
+            case "discapacidad":
+                iconPath = "icons/disability.png";
+                break;
+            case "período":
+                iconPath = "icons/period.png";
+                break;
+            case "solicitudes":
+                iconPath = "icons/verify.png";
+                break;
+            case "fechas":
+                iconPath = "icons/dates.png";
+                break;
+            case "múltiples":
+                iconPath = "icons/multiple.png";
+                break;
+            default:
+                iconPath = null;
+        }
+        if (iconPath != null) {
+            // Simulamos el ícono con un texto, reemplaza con ImageIcon real si tienes los archivos
+            boton.setIcon(new ImageIcon(iconPath));
+            boton.setIconTextGap(10);
+        }
     }
 
     private void cargarDatosEnTablas() {
@@ -104,371 +284,450 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-        lblTitulo = new JLabel("Sistema Bono Dignidad");
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 
-        lblBonos = new JLabel("Bonos");
-        lblBonos.setFont(new Font("Arial", Font.BOLD, 18));
-
-        lblBeneficiarios = new JLabel("Beneficiarios");
-        lblBeneficiarios.setFont(new Font("Arial", Font.BOLD, 18));
-
-        lblAdministradores = new JLabel("Administradores");
-        lblAdministradores.setFont(new Font("Arial", Font.BOLD, 18));
-
+        backgroundPanel = new javax.swing.JPanel();
+        headerPanel = new javax.swing.JPanel();
+        lblTitulo = new javax.swing.JLabel();
+        tabbedPane = new javax.swing.JTabbedPane();
+        bonosPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaBonos = new javax.swing.JTable();
+        bonosButtonsPanel = new javax.swing.JPanel();
+        btnAgregarBono = new javax.swing.JButton();
+        btnBorrarBono = new javax.swing.JButton();
+        btnRegistrarPago = new javax.swing.JButton();
+        beneficiariosPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaBeneficiarios = new javax.swing.JTable();
+        beneficiariosButtonsPanel = new javax.swing.JPanel();
+        btnAgregarBeneficiario = new javax.swing.JButton();
+        btnBorrarBeneficiario = new javax.swing.JButton();
+        administradoresPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablaAdministradores = new javax.swing.JTable();
-        btnAgregarBono = new javax.swing.JButton("Agregar Bono");
-        btnAgregarBeneficiario = new javax.swing.JButton("Agregar Beneficiario");
-        btnAgregarAdministrador = new javax.swing.JButton("Agregar Administrador");
-        btnBorrarBono = new javax.swing.JButton("Borrar Bono");
-        btnBorrarBeneficiario = new javax.swing.JButton("Borrar Beneficiario");
-        btnBorrarAdministrador = new javax.swing.JButton("Borrar Administrador");
-        btnGenerarReporte = new javax.swing.JButton("Generar Reporte");
-        btnBeneficiosPorDiscapacidad = new javax.swing.JButton("Beneficios por Discap.");
-        btnMontoPorPeriodo = new javax.swing.JButton("Monto por Periodo");
-        btnVerificarSolicitudes = new javax.swing.JButton("Verificar Solicitudes");
-        btnFechasBonoBeneficiario = new javax.swing.JButton("Fechas de Bonos");
-        btnMultiplesBonos = new javax.swing.JButton("Múltiples Bonos");
-        btnConsola = new javax.swing.JButton("Ejecutar en Consola");
+        administradoresButtonsPanel = new javax.swing.JPanel();
+        btnAgregarAdministrador = new javax.swing.JButton();
+        btnBorrarAdministrador = new javax.swing.JButton();
+        reportesPanel = new javax.swing.JPanel();
+        btnGenerarReporte = new javax.swing.JButton();
+        btnBeneficiosPorDiscapacidad = new javax.swing.JButton();
+        btnMontoPorPeriodo = new javax.swing.JButton();
+        btnVerificarSolicitudes = new javax.swing.JButton();
+        btnFechasBonoBeneficiario = new javax.swing.JButton();
+        btnMultiplesBonos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(1100, 750));
+        setTitle("Sistema Bono Dignidad");
+        setPreferredSize(new java.awt.Dimension(1200, 800));
+
+        backgroundPanel.setLayout(new java.awt.BorderLayout());
+
+        headerPanel.setLayout(new java.awt.BorderLayout());
+
+        lblTitulo.setText("Sistema Bono Dignidad");
+        headerPanel.add(lblTitulo, java.awt.BorderLayout.CENTER);
+
+        backgroundPanel.add(headerPanel, java.awt.BorderLayout.NORTH);
+
+        bonosPanel.setLayout(new java.awt.BorderLayout(10, 10));
 
         tablaBonos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object[][] {},
-            new String[] {"Tipo", "Fecha Inicio", "Fecha Fin", "Monto"}
+            new Object [][] {},
+            new String [] {
+                "Tipo", "Fecha Inicio", "Fecha Fin", "Monto"
+            }
         ));
-        tablaBonos.setBackground(Color.WHITE);
-        tablaBonos.setGridColor(new Color(0, 102, 204));
-        tablaBonos.setFont(new Font("Arial", Font.PLAIN, 14));
-        tablaBonos.setRowHeight(25);
         jScrollPane1.setViewportView(tablaBonos);
-        jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204), 2));
+
+        bonosPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        bonosButtonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 10));
+
+        btnAgregarBono.setText("Agregar Bono");
+        btnAgregarBono.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarBonoActionPerformed(evt);
+            }
+        });
+        bonosButtonsPanel.add(btnAgregarBono);
+
+        btnBorrarBono.setText("Borrar Bono");
+        btnBorrarBono.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarBonoActionPerformed(evt);
+            }
+        });
+        bonosButtonsPanel.add(btnBorrarBono);
+
+        btnRegistrarPago.setText("Registrar Pago");
+        btnRegistrarPago.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarPagoActionPerformed(evt);
+            }
+        });
+        bonosButtonsPanel.add(btnRegistrarPago);
+
+        bonosPanel.add(bonosButtonsPanel, java.awt.BorderLayout.SOUTH);
+
+        tabbedPane.addTab("Bonos", bonosPanel);
+
+        beneficiariosPanel.setLayout(new java.awt.BorderLayout(10, 10));
 
         tablaBeneficiarios.setModel(new javax.swing.table.DefaultTableModel(
-            new Object[][] {},
-            new String[] {"Nombre", "CI", "Edad", "Dirección", "Fecha Nacimiento", "Tipo Discapacidad", "Grado Discapacidad"}
+            new Object [][] {},
+            new String [] {
+                "Nombre", "CI", "Edad", "Dirección", "Fecha Nacimiento", "Tipo Discapacidad", "Grado Discapacidad"
+            }
         ));
-        tablaBeneficiarios.setBackground(Color.WHITE);
-        tablaBeneficiarios.setGridColor(new Color(0, 102, 204));
-        tablaBeneficiarios.setFont(new Font("Arial", Font.PLAIN, 14));
-        tablaBeneficiarios.setRowHeight(25);
         jScrollPane2.setViewportView(tablaBeneficiarios);
-        jScrollPane2.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204), 2));
+
+        beneficiariosPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        beneficiariosButtonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 10));
+
+        btnAgregarBeneficiario.setText("Agregar Beneficiario");
+        btnAgregarBeneficiario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarBeneficiarioActionPerformed(evt);
+            }
+        });
+        beneficiariosButtonsPanel.add(btnAgregarBeneficiario);
+
+        btnBorrarBeneficiario.setText("Borrar Beneficiario");
+        btnBorrarBeneficiario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarBeneficiarioActionPerformed(evt);
+            }
+        });
+        beneficiariosButtonsPanel.add(btnBorrarBeneficiario);
+
+        beneficiariosPanel.add(beneficiariosButtonsPanel, java.awt.BorderLayout.SOUTH);
+
+        tabbedPane.addTab("Beneficiarios", beneficiariosPanel);
+
+        administradoresPanel.setLayout(new java.awt.BorderLayout(10, 10));
 
         tablaAdministradores.setModel(new javax.swing.table.DefaultTableModel(
-            new Object[][] {},
-            new String[] {"ID", "Cargo", "Contacto", "Fecha Creación", "Nombre", "CI"}
+            new Object [][] {},
+            new String [] {
+                "ID", "Cargo", "Contacto", "Fecha Creación", "Nombre", "CI"
+            }
         ));
-        tablaAdministradores.setBackground(Color.WHITE);
-        tablaAdministradores.setGridColor(new Color(0, 102, 204));
-        tablaAdministradores.setFont(new Font("Arial", Font.PLAIN, 14));
-        tablaAdministradores.setRowHeight(25);
         jScrollPane3.setViewportView(tablaAdministradores);
-        jScrollPane3.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204), 2));
 
-        // Estilizar botones
-        btnAgregarBono.setBackground(new Color(46, 139, 87)); // Verde oscuro
-        btnAgregarBono.setForeground(Color.WHITE);
-        btnAgregarBono.setFont(new Font("Arial", Font.BOLD, 14));
-        btnAgregarBono.addActionListener(evt -> btnAgregarBonoActionPerformed(evt));
+        administradoresPanel.add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
-        btnAgregarBeneficiario.setBackground(new Color(46, 139, 87));
-        btnAgregarBeneficiario.setForeground(Color.WHITE);
-        btnAgregarBeneficiario.setFont(new Font("Arial", Font.BOLD, 14));
-        btnAgregarBeneficiario.addActionListener(evt -> btnAgregarBeneficiarioActionPerformed(evt));
+        administradoresButtonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 10));
 
-        btnAgregarAdministrador.setBackground(new Color(46, 139, 87));
-        btnAgregarAdministrador.setForeground(Color.WHITE);
-        btnAgregarAdministrador.setFont(new Font("Arial", Font.BOLD, 14));
-        btnAgregarAdministrador.addActionListener(evt -> btnAgregarAdministradorActionPerformed(evt));
+        btnAgregarAdministrador.setText("Agregar Administrador");
+        btnAgregarAdministrador.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarAdministradorActionPerformed(evt);
+            }
+        });
+        administradoresButtonsPanel.add(btnAgregarAdministrador);
 
-        btnBorrarBono.setBackground(new Color(255, 69, 0)); // Rojo
-        btnBorrarBono.setForeground(Color.WHITE);
-        btnBorrarBono.setFont(new Font("Arial", Font.BOLD, 14));
-        btnBorrarBono.addActionListener(evt -> btnBorrarBonoActionPerformed(evt));
+        btnBorrarAdministrador.setText("Borrar Administrador");
+        btnBorrarAdministrador.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarAdministradorActionPerformed(evt);
+            }
+        });
+        administradoresButtonsPanel.add(btnBorrarAdministrador);
 
-        btnBorrarBeneficiario.setBackground(new Color(255, 69, 0));
-        btnBorrarBeneficiario.setForeground(Color.WHITE);
-        btnBorrarBeneficiario.setFont(new Font("Arial", Font.BOLD, 14));
-        btnBorrarBeneficiario.addActionListener(evt -> btnBorrarBeneficiarioActionPerformed(evt));
+        administradoresPanel.add(administradoresButtonsPanel, java.awt.BorderLayout.SOUTH);
 
-        btnBorrarAdministrador.setBackground(new Color(255, 69, 0));
-        btnBorrarAdministrador.setForeground(Color.WHITE);
-        btnBorrarAdministrador.setFont(new Font("Arial", Font.BOLD, 14));
-        btnBorrarAdministrador.addActionListener(evt -> btnBorrarAdministradorActionPerformed(evt));
+        tabbedPane.addTab("Administradores", administradoresPanel);
 
-        btnGenerarReporte.setBackground(new Color(0, 102, 204)); // Azul
-        btnGenerarReporte.setForeground(Color.WHITE);
-        btnGenerarReporte.setFont(new Font("Arial", Font.BOLD, 14));
-        btnGenerarReporte.addActionListener(evt -> btnGenerarReporteActionPerformed(evt));
+        reportesPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 15));
 
-        btnBeneficiosPorDiscapacidad.setBackground(new Color(0, 102, 204));
-        btnBeneficiosPorDiscapacidad.setForeground(Color.WHITE);
-        btnBeneficiosPorDiscapacidad.setFont(new Font("Arial", Font.BOLD, 14));
-        btnBeneficiosPorDiscapacidad.addActionListener(evt -> btnBeneficiosPorDiscapacidadActionPerformed(evt));
+        btnGenerarReporte.setText("Generar Reporte");
+        btnGenerarReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarReporteActionPerformed(evt);
+            }
+        });
+        reportesPanel.add(btnGenerarReporte);
 
-        btnMontoPorPeriodo.setBackground(new Color(0, 102, 204));
-        btnMontoPorPeriodo.setForeground(Color.WHITE);
-        btnMontoPorPeriodo.setFont(new Font("Arial", Font.BOLD, 14));
-        btnMontoPorPeriodo.addActionListener(evt -> btnMontoPorPeriodoActionPerformed(evt));
+        btnBeneficiosPorDiscapacidad.setText("Beneficios por Discap.");
+        btnBeneficiosPorDiscapacidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBeneficiosPorDiscapacidadActionPerformed(evt);
+            }
+        });
+        reportesPanel.add(btnBeneficiosPorDiscapacidad);
 
-        btnVerificarSolicitudes.setBackground(new Color(0, 102, 204));
-        btnVerificarSolicitudes.setForeground(Color.WHITE);
-        btnVerificarSolicitudes.setFont(new Font("Arial", Font.BOLD, 14));
-        btnVerificarSolicitudes.addActionListener(evt -> btnVerificarSolicitudesActionPerformed(evt));
+        btnMontoPorPeriodo.setText("Monto por Período");
+        btnMontoPorPeriodo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMontoPorPeriodoActionPerformed(evt);
+            }
+        });
+        reportesPanel.add(btnMontoPorPeriodo);
 
-        btnFechasBonoBeneficiario.setBackground(new Color(0, 102, 204));
-        btnFechasBonoBeneficiario.setForeground(Color.WHITE);
-        btnFechasBonoBeneficiario.setFont(new Font("Arial", Font.BOLD, 14));
-        btnFechasBonoBeneficiario.addActionListener(evt -> btnFechasBonoBeneficiarioActionPerformed(evt));
+        btnVerificarSolicitudes.setText("Verificar Solicitudes");
+        btnVerificarSolicitudes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerificarSolicitudesActionPerformed(evt);
+            }
+        });
+        reportesPanel.add(btnVerificarSolicitudes);
 
-        btnMultiplesBonos.setBackground(new Color(0, 102, 204));
-        btnMultiplesBonos.setForeground(Color.WHITE);
-        btnMultiplesBonos.setFont(new Font("Arial", Font.BOLD, 14));
-        btnMultiplesBonos.addActionListener(evt -> btnMultiplesBonosActionPerformed(evt));
+        btnFechasBonoBeneficiario.setText("Fechas de Beneficiario");
+        btnFechasBonoBeneficiario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFechasBonoBeneficiarioActionPerformed(evt);
+            }
+        });
+        reportesPanel.add(btnFechasBonoBeneficiario);
 
-        btnConsola.setBackground(new Color(0, 102, 204));
-        btnConsola.setForeground(Color.WHITE);
-        btnConsola.setFont(new Font("Arial", Font.BOLD, 14));
-        btnConsola.addActionListener(evt -> ejecutarEnConsola());
-        
-        // Layout
+        btnMultiplesBonos.setText("Múltiples Bonos");
+        btnMultiplesBonos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMultiplesBonosActionPerformed(evt);
+            }
+        });
+        reportesPanel.add(btnMultiplesBonos);
+
+        tabbedPane.addTab("Reportes", reportesPanel);
+
+        backgroundPanel.add(tabbedPane, java.awt.BorderLayout.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblBonos)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
-                    .addComponent(lblBeneficiarios)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
-                    .addComponent(lblAdministradores)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAgregarBono, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnAgregarBeneficiario, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnAgregarAdministrador, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnBorrarBono, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnBorrarBeneficiario, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnBorrarAdministrador, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnBeneficiosPorDiscapacidad, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnMontoPorPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnVerificarSolicitudes, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnFechasBonoBeneficiario, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnMultiplesBonos, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10)
-                        .addComponent(btnConsola, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18)
-                .addComponent(lblBonos)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18)
-                .addComponent(lblBeneficiarios)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18)
-                .addComponent(lblAdministradores)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAgregarBono, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAgregarBeneficiario, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAgregarAdministrador, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBorrarBono, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBorrarBeneficiario, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBorrarAdministrador, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBeneficiosPorDiscapacidad, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMontoPorPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnVerificarSolicitudes, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnFechasBonoBeneficiario, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMultiplesBonos, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnConsola, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
-    }
+    }// </editor-fold>                        
 
     private void btnAgregarBonoActionPerformed(java.awt.event.ActionEvent evt) {
-        BonoDignidad bono = new BonoDignidad();
-        String tipo = JOptionPane.showInputDialog(this, "Ingrese el tipo de bono:");
-        if (tipo == null || tipo.trim().isEmpty()) return;
-        String fechaIni = JOptionPane.showInputDialog(this, "Ingrese la fecha de inicio (dd/mm/yyyy):");
-        if (fechaIni == null || fechaIni.trim().isEmpty()) return;
-        String fechaFin = JOptionPane.showInputDialog(this, "Ingrese la fecha de fin (dd/mm/yyyy):");
-        if (fechaFin == null || fechaFin.trim().isEmpty()) return;
-        String montoStr = JOptionPane.showInputDialog(this, "Ingrese el monto:");
-        if (montoStr == null || montoStr.trim().isEmpty()) return;
+        if (numBonos[0] >= MAX_REGISTROS) {
+            JOptionPane.showMessageDialog(this, "No se pueden agregar más bonos, límite alcanzado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        try {
-            double monto = Double.parseDouble(montoStr);
-            bono.setNombretipo(tipo);
-            bono.setFechaIni(fechaIni);
-            bono.setFechaFin(fechaFin);
-            bono.setMonto(monto);
+        JTextField tipoField = new JTextField(20);
+        JTextField fechaIniField = new JTextField(10);
+        JTextField fechaFinField = new JTextField(10);
+        JTextField montoField = new JTextField(10);
+        JComboBox<String> beneficiarioCombo = new JComboBox<>();
+        beneficiarioCombo.addItem("Ninguno");
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            beneficiarioCombo.addItem(beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
+        }
 
-            if (numBeneficiarios[0] > 0) {
-                String[] opciones = new String[numBeneficiarios[0] + 1];
-                opciones[0] = "No asociar";
-                for (int i = 0; i < numBeneficiarios[0]; i++) {
-                    opciones[i + 1] = beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")";
+        JPanel panel = new JPanel(new GridLayout(5, 2));
+        panel.add(new JLabel("Tipo:"));
+        panel.add(tipoField);
+        panel.add(new JLabel("Fecha Inicio (dd/mm/yyyy):"));
+        panel.add(fechaIniField);
+        panel.add(new JLabel("Fecha Fin (dd/mm/yyyy):"));
+        panel.add(fechaFinField);
+        panel.add(new JLabel("Monto:"));
+        panel.add(montoField);
+        panel.add(new JLabel("Beneficiario:"));
+        panel.add(beneficiarioCombo);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Agregar Bono", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                String tipo = tipoField.getText().trim();
+                String fechaIni = fechaIniField.getText().trim();
+                String fechaFin = fechaFinField.getText().trim();
+                double monto = Double.parseDouble(montoField.getText().trim());
+
+                if (tipo.isEmpty() || fechaIni.isEmpty() || fechaFin.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
-                String seleccion = (String) JOptionPane.showInputDialog(
-                    this,
-                    "Seleccione un beneficiario:",
-                    "Asociar Beneficiario",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    opciones,
-                    opciones[0]
-                );
-                if (seleccion != null && !seleccion.equals("No asociar")) {
-                    int indice = 0;
-                    for (int i = 0; i < numBeneficiarios[0]; i++) {
-                        if (opciones[i + 1].equals(seleccion)) {
-                            indice = i;
-                            break;
-                        }
-                    }
-                    SolicitudBono solicitud = new SolicitudBono(fechaIni, "Aprobada", beneficiarios[indice]);
+
+                if (!validarFormatoFecha(fechaIni) || !validarFormatoFecha(fechaFin)) {
+                    JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                BonoDignidad bono = new BonoDignidad(tipo, fechaIni, fechaFin, monto);
+                int beneficiarioIndex = beneficiarioCombo.getSelectedIndex() - 1;
+                if (beneficiarioIndex >= 0) {
+                    SolicitudBono solicitud = new SolicitudBono(fechaIni, "Aprobada", beneficiarios[beneficiarioIndex]);
                     bono.agregarSolicitud(solicitud);
                 }
-            }
 
-            if (numBonos[0] < MAX_REGISTROS) {
                 bonos[numBonos[0]] = bono;
                 numBonos[0]++;
                 cargarDatosEnTablas();
-            } else {
-                JOptionPane.showMessageDialog(this, "Límite de bonos alcanzado.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Bono registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "El monto debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Monto inválido.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void btnAgregarBeneficiarioActionPerformed(java.awt.event.ActionEvent evt) {
-        Beneficiario beneficiario = new Beneficiario();
-        String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre:");
-        if (nombre == null || nombre.trim().isEmpty()) return;
-        String ci = JOptionPane.showInputDialog(this, "Ingrese la CI:");
-        if (ci == null || ci.trim().isEmpty()) return;
-        String edadStr = JOptionPane.showInputDialog(this, "Ingrese la edad:");
-        if (edadStr == null || edadStr.trim().isEmpty()) return;
-        String direccion = JOptionPane.showInputDialog(this, "Ingrese la dirección:");
-        if (direccion == null || direccion.trim().isEmpty()) return;
-        String fechaNacimiento = JOptionPane.showInputDialog(this, "Ingrese la fecha de nacimiento (dd/mm/yyyy):");
-        if (fechaNacimiento == null || fechaNacimiento.trim().isEmpty()) return;
-        String tipoDiscapacidad = JOptionPane.showInputDialog(this, "Ingrese el tipo de discapacidad:");
-        if (tipoDiscapacidad == null || tipoDiscapacidad.trim().isEmpty()) return;
-        String gradoDiscapacidad = JOptionPane.showInputDialog(this, "Ingrese el grado de discapacidad:");
-        if (gradoDiscapacidad == null || gradoDiscapacidad.trim().isEmpty()) return;
+        if (numBeneficiarios[0] >= MAX_REGISTROS) {
+            JOptionPane.showMessageDialog(this, "No se pueden agregar más beneficiarios, límite alcanzado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        try {
-            int edad = Integer.parseInt(edadStr);
-            beneficiario.setNombre(nombre);
-            beneficiario.setCi(ci);
-            beneficiario.setEdad(edad);
-            beneficiario.setDireccion(direccion);
-            beneficiario.setFecha_nacimiento(fechaNacimiento);
-            beneficiario.setTipodiscapacidad(tipoDiscapacidad);
-            beneficiario.setGradodiscapacidad(gradoDiscapacidad);
+        JTextField nombreField = new JTextField(20);
+        JTextField ciField = new JTextField(10);
+        JTextField edadField = new JTextField(5);
+        JTextField direccionField = new JTextField(20);
+        JTextField fechaNacField = new JTextField(10);
+        JTextField tipoDiscField = new JTextField(15);
+        JTextField gradoDiscField = new JTextField(15);
 
-            if (numBeneficiarios[0] < MAX_REGISTROS) {
+        JPanel panel = new JPanel(new GridLayout(7, 2));
+        panel.add(new JLabel("Nombre:"));
+        panel.add(nombreField);
+        panel.add(new JLabel("CI:"));
+        panel.add(ciField);
+        panel.add(new JLabel("Edad:"));
+        panel.add(edadField);
+        panel.add(new JLabel("Dirección:"));
+        panel.add(direccionField);
+        panel.add(new JLabel("Fecha Nacimiento (dd/mm/yyyy):"));
+        panel.add(fechaNacField);
+        panel.add(new JLabel("Tipo Discapacidad:"));
+        panel.add(tipoDiscField);
+        panel.add(new JLabel("Grado Discapacidad:"));
+        panel.add(gradoDiscField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Agregar Beneficiario", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                String nombre = nombreField.getText().trim();
+                String ci = ciField.getText().trim();
+                int edad = Integer.parseInt(edadField.getText().trim());
+                String direccion = direccionField.getText().trim();
+                String fechaNac = fechaNacField.getText().trim();
+                String tipoDisc = tipoDiscField.getText().trim();
+                String gradoDisc = gradoDiscField.getText().trim();
+
+                if (nombre.isEmpty() || ci.isEmpty() || direccion.isEmpty() || fechaNac.isEmpty() || tipoDisc.isEmpty() || gradoDisc.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!validarFormatoFecha(fechaNac)) {
+                    JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Beneficiario beneficiario = new Beneficiario(nombre, ci, edad, direccion, fechaNac, tipoDisc, gradoDisc);
                 beneficiarios[numBeneficiarios[0]] = beneficiario;
                 numBeneficiarios[0]++;
                 cargarDatosEnTablas();
-            } else {
-                JOptionPane.showMessageDialog(this, "Límite de beneficiarios alcanzado.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Beneficiario registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "La edad debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Edad inválida.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void btnAgregarAdministradorActionPerformed(java.awt.event.ActionEvent evt) {
-        Administrador administrador = new Administrador();
-        String id = JOptionPane.showInputDialog(this, "Ingrese el ID:");
-        if (id == null || id.trim().isEmpty()) return;
-        String cargo = JOptionPane.showInputDialog(this, "Ingrese el cargo:");
-        if (cargo == null || cargo.trim().isEmpty()) return;
-        String contacto = JOptionPane.showInputDialog(this, "Ingrese el contacto:");
-        if (contacto == null || contacto.trim().isEmpty()) return;
-        String fecCreCuenta = JOptionPane.showInputDialog(this, "Ingrese la fecha de creación (dd/mm/yyyy):");
-        if (fecCreCuenta == null || fecCreCuenta.trim().isEmpty()) return;
-        String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre:");
-        if (nombre == null || nombre.trim().isEmpty()) return;
-        String ci = JOptionPane.showInputDialog(this, "Ingrese la CI:");
-        if (ci == null || ci.trim().isEmpty()) return;
+        if (numAdministradores[0] >= MAX_REGISTROS) {
+            JOptionPane.showMessageDialog(this, "No se pueden agregar más administradores, límite alcanzado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        administrador.setId(id);
-        administrador.setCargo(cargo);
-        administrador.setContacto(contacto);
-        administrador.setFecCreCuenta(fecCreCuenta);
-        administrador.setNombre(nombre);
-        administrador.setCi(ci);
+        JTextField idField = new JTextField(10);
+        JTextField cargoField = new JTextField(15);
+        JTextField contactoField = new JTextField(20);
+        JTextField fechaCreacionField = new JTextField(10);
+        JTextField nombreField = new JTextField(20);
+        JTextField ciField = new JTextField(10);
 
-        if (numAdministradores[0] < MAX_REGISTROS) {
+        JPanel panel = new JPanel(new GridLayout(6, 2));
+        panel.add(new JLabel("ID:"));
+        panel.add(idField);
+        panel.add(new JLabel("Cargo:"));
+        panel.add(cargoField);
+        panel.add(new JLabel("Contacto:"));
+        panel.add(contactoField);
+        panel.add(new JLabel("Fecha Creación (dd/mm/yyyy):"));
+        panel.add(fechaCreacionField);
+        panel.add(new JLabel("Nombre:"));
+        panel.add(nombreField);
+        panel.add(new JLabel("CI:"));
+        panel.add(ciField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Agregar Administrador", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String id = idField.getText().trim();
+            String cargo = cargoField.getText().trim();
+            String contacto = contactoField.getText().trim();
+            String fechaCreacion = fechaCreacionField.getText().trim();
+            String nombre = nombreField.getText().trim();
+            String ci = ciField.getText().trim();
+
+            if (id.isEmpty() || cargo.isEmpty() || contacto.isEmpty() || fechaCreacion.isEmpty() || nombre.isEmpty() || ci.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!validarFormatoFecha(fechaCreacion)) {
+                JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Administrador administrador = new Administrador(id, cargo, contacto, fechaCreacion, nombre, ci);
             administradores[numAdministradores[0]] = administrador;
             numAdministradores[0]++;
             cargarDatosEnTablas();
-        } else {
-            JOptionPane.showMessageDialog(this, "Límite de administradores alcanzado.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Administrador registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     private void btnBorrarBonoActionPerformed(java.awt.event.ActionEvent evt) {
+        if (numBonos[0] == 0) {
+            JOptionPane.showMessageDialog(this, "No hay bonos registrados para borrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int selectedRow = tablaBonos.getSelectedRow();
-        if (selectedRow >= 0 && selectedRow < numBonos[0]) {
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un bono para borrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de borrar este bono?", "Confirmar Borrado", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
             for (int i = selectedRow; i < numBonos[0] - 1; i++) {
                 bonos[i] = bonos[i + 1];
             }
             bonos[numBonos[0] - 1] = null;
             numBonos[0]--;
             cargarDatosEnTablas();
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un bono para borrar.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Bono eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     private void btnBorrarBeneficiarioActionPerformed(java.awt.event.ActionEvent evt) {
+        if (numBeneficiarios[0] == 0) {
+            JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados para borrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int selectedRow = tablaBeneficiarios.getSelectedRow();
-        if (selectedRow >= 0 && selectedRow < numBeneficiarios[0]) {
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un beneficiario para borrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de borrar este beneficiario?", "Confirmar Borrado", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Eliminar solicitudes asociadas
             for (int i = 0; i < numBonos[0]; i++) {
                 for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
                     if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiarios[selectedRow]) {
@@ -486,341 +745,487 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             beneficiarios[numBeneficiarios[0] - 1] = null;
             numBeneficiarios[0]--;
             cargarDatosEnTablas();
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un beneficiario para borrar.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Beneficiario y solicitudes asociadas eliminados exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     private void btnBorrarAdministradorActionPerformed(java.awt.event.ActionEvent evt) {
+        if (numAdministradores[0] == 0) {
+            JOptionPane.showMessageDialog(this, "No hay administradores registrados para borrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int selectedRow = tablaAdministradores.getSelectedRow();
-        if (selectedRow >= 0 && selectedRow < numAdministradores[0]) {
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un administrador para borrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de borrar este administrador?", "Confirmar Borrado", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
             for (int i = selectedRow; i < numAdministradores[0] - 1; i++) {
                 administradores[i] = administradores[i + 1];
             }
             administradores[numAdministradores[0] - 1] = null;
             numAdministradores[0]--;
             cargarDatosEnTablas();
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un administrador para borrar.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Administrador eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    private void btnRegistrarPagoActionPerformed(java.awt.event.ActionEvent evt) {
+        if (numBonos[0] == 0) {
+            JOptionPane.showMessageDialog(this, "No hay bonos registrados para registrar un pago.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Seleccionar el bono
+        JComboBox<String> bonoCombo = new JComboBox<>();
+        for (int i = 0; i < numBonos[0]; i++) {
+            bonoCombo.addItem(bonos[i].getNombretipo() + " (Inicio: " + bonos[i].getFechaIni() + ")");
+        }
+
+        JPanel bonoPanel = new JPanel(new GridLayout(1, 2));
+        bonoPanel.add(new JLabel("Seleccione Bono:"));
+        bonoPanel.add(bonoCombo);
+
+        int bonoResult = JOptionPane.showConfirmDialog(this, bonoPanel, "Seleccionar Bono", JOptionPane.OK_CANCEL_OPTION);
+        if (bonoResult != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        int bonoIndex = bonoCombo.getSelectedIndex();
+        BonoDignidad bonoSeleccionado = bonos[bonoIndex];
+
+        // Verificar si el bono tiene solicitudes
+        SolicitudBono solicitudSeleccionada = null;
+        if (bonoSeleccionado.getNumSolicitudes() > 0) {
+            // Mostrar solicitudes existentes
+            JComboBox<String> solicitudCombo = new JComboBox<>();
+            for (int i = 0; i < bonoSeleccionado.getNumSolicitudes(); i++) {
+                SolicitudBono solicitud = bonoSeleccionado.getRegisSoli()[i];
+                String beneficiarioNombre = solicitud.getBeneficiario() != null ? solicitud.getBeneficiario().getNombre() : "Sin beneficiario";
+                solicitudCombo.addItem("Solicitud " + (i + 1) + " - Fecha: " + solicitud.getFechaSolicitud() + " - Beneficiario: " + beneficiarioNombre);
+            }
+            solicitudCombo.addItem("Crear nueva solicitud");
+
+            JPanel solicitudPanel = new JPanel(new GridLayout(1, 2));
+            solicitudPanel.add(new JLabel("Seleccione Solicitud:"));
+            solicitudPanel.add(solicitudCombo);
+
+            int solicitudResult = JOptionPane.showConfirmDialog(this, solicitudPanel, "Seleccionar Solicitud", JOptionPane.OK_CANCEL_OPTION);
+            if (solicitudResult != JOptionPane.OK_OPTION) {
+                return;
+            }
+
+            int solicitudIndex = solicitudCombo.getSelectedIndex();
+            if (solicitudIndex == bonoSeleccionado.getNumSolicitudes()) {
+                // Crear nueva solicitud
+                solicitudSeleccionada = crearNuevaSolicitud(bonoSeleccionado);
+                if (solicitudSeleccionada == null) {
+                    return; // El usuario canceló o no hay beneficiarios
+                }
+            } else {
+                solicitudSeleccionada = bonoSeleccionado.getRegisSoli()[solicitudIndex];
+            }
+        } else {
+            // No hay solicitudes, crear una nueva
+            solicitudSeleccionada = crearNuevaSolicitud(bonoSeleccionado);
+            if (solicitudSeleccionada == null) {
+                return; // El usuario canceló o no hay beneficiarios
+            }
+        }
+
+        // Registrar el pago
+        JTextField fechaPagoField = new JTextField(10);
+        JTextField montoField = new JTextField(10);
+
+        JPanel pagoPanel = new JPanel(new GridLayout(2, 2));
+        pagoPanel.add(new JLabel("Fecha Pago (dd/mm/yyyy):"));
+        pagoPanel.add(fechaPagoField);
+        pagoPanel.add(new JLabel("Monto:"));
+        pagoPanel.add(montoField);
+
+        int pagoResult = JOptionPane.showConfirmDialog(this, pagoPanel, "Registrar Pago", JOptionPane.OK_CANCEL_OPTION);
+        if (pagoResult == JOptionPane.OK_OPTION) {
+            try {
+                String fechaPago = fechaPagoField.getText().trim();
+                double monto = Double.parseDouble(montoField.getText().trim());
+
+                if (!validarFormatoFecha(fechaPago)) {
+                    JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Pago pago = new Pago(fechaPago, monto, solicitudSeleccionada);
+                bonoSeleccionado.agregarPago(pago);
+                solicitudSeleccionada.setPagada(true);
+                JOptionPane.showMessageDialog(this, "Pago registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "El monto debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private SolicitudBono crearNuevaSolicitud(BonoDignidad bono) {
+        if (numBeneficiarios[0] == 0) {
+            JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados para asociar una solicitud.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
+        JComboBox<String> beneficiarioCombo = new JComboBox<>();
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            beneficiarioCombo.addItem(beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
+        }
+
+        JTextField fechaSolicitudField = new JTextField(10);
+
+        JPanel solicitudPanel = new JPanel(new GridLayout(2, 2));
+        solicitudPanel.add(new JLabel("Seleccione Beneficiario:"));
+        solicitudPanel.add(beneficiarioCombo);
+        solicitudPanel.add(new JLabel("Fecha Solicitud (dd/mm/yyyy):"));
+        solicitudPanel.add(fechaSolicitudField);
+
+        int result = JOptionPane.showConfirmDialog(this, solicitudPanel, "Crear Nueva Solicitud", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String fechaSolicitud = fechaSolicitudField.getText().trim();
+            if (!validarFormatoFecha(fechaSolicitud)) {
+                JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+
+            int beneficiarioIndex = beneficiarioCombo.getSelectedIndex();
+            SolicitudBono solicitud = new SolicitudBono(fechaSolicitud, "Aprobada", beneficiarios[beneficiarioIndex]);
+            bono.agregarSolicitud(solicitud);
+            return solicitud;
+        }
+        return null;
     }
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {
         StringBuilder reporte = new StringBuilder();
+        reporte.append("Reporte del Sistema Bono Dignidad\n\n");
+        reporte.append("Bonos Registrados:\n");
         for (int i = 0; i < numBonos[0]; i++) {
-            reporte.append("Bono: ").append(bonos[i].getNombretipo()).append(", Monto: ").append(bonos[i].getMonto()).append("\n");
+            reporte.append(String.format("Bono #%d\n", i + 1));
+            reporte.append(String.format("Tipo: %s\n", bonos[i].getNombretipo()));
+            reporte.append(String.format("Fecha Inicio: %s\n", bonos[i].getFechaIni()));
+            reporte.append(String.format("Fecha Fin: %s\n", bonos[i].getFechaFin()));
+            reporte.append(String.format("Monto: %.2f\n", bonos[i].getMonto()));
+            reporte.append("\n");
         }
-        JOptionPane.showMessageDialog(this, reporte.toString(), "Reporte", JOptionPane.INFORMATION_MESSAGE);
+
+        reporte.append("Beneficiarios Registrados:\n");
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            reporte.append(String.format("Beneficiario #%d\n", i + 1));
+            reporte.append(String.format("Nombre: %s\n", beneficiarios[i].getNombre()));
+            reporte.append(String.format("CI: %s\n", beneficiarios[i].getCi()));
+            reporte.append(String.format("Edad: %d\n", beneficiarios[i].getEdad()));
+            reporte.append(String.format("Dirección: %s\n", beneficiarios[i].getDireccion()));
+            reporte.append(String.format("Fecha Nacimiento: %s\n", beneficiarios[i].getFecha_nacimiento()));
+            reporte.append(String.format("Tipo Discapacidad: %s\n", beneficiarios[i].getTipodiscapacidad()));
+            reporte.append(String.format("Grado Discapacidad: %s\n", beneficiarios[i].getGradodiscapacidad()));
+            reporte.append("\n");
+        }
+
+        reporte.append("Administradores Registrados:\n");
+        for (int i = 0; i < numAdministradores[0]; i++) {
+            reporte.append(String.format("Administrador #%d\n", i + 1));
+            reporte.append(String.format("ID: %s\n", administradores[i].getId()));
+            reporte.append(String.format("Cargo: %s\n", administradores[i].getCargo()));
+            reporte.append(String.format("Contacto: %s\n", administradores[i].getContacto()));
+            reporte.append(String.format("Fecha Creación: %s\n", administradores[i].getFecCreCuenta()));
+            reporte.append(String.format("Nombre: %s\n", administradores[i].getNombre()));
+            reporte.append(String.format("CI: %s\n", administradores[i].getCi()));
+            reporte.append("\n");
+        }
+
+        JTextArea textArea = new JTextArea(reporte.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textArea.setBackground(new Color(245, 245, 245));
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        scrollPane.setPreferredSize(new Dimension(600, 400));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
+        JOptionPane.showMessageDialog(this, scrollPane, "Reporte General", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void btnBeneficiosPorDiscapacidadActionPerformed(java.awt.event.ActionEvent evt) {
-        int[] conteo = new int[100]; // Suponemos un máximo de 100 tipos únicos
-        String[] tipos = new String[100];
-        int tipoCount = 0;
+        if (numBeneficiarios[0] == 0) {
+            JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        for (int i = 0; i < numBonos[0]; i++) {
-            for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                String tipoDiscapacidad = bonos[i].getRegisSoli()[j].getBeneficiario().getTipodiscapacidad();
-                boolean found = false;
-                for (int k = 0; k < tipoCount; k++) {
-                    if (tipos[k] != null && tipos[k].equals(tipoDiscapacidad)) {
-                        conteo[k]++;
-                        found = true;
-                        break;
-                    }
+        int[] conteoDiscapacidades = new int[10];
+        String[] tipos = new String[10];
+        int tiposCount = 0;
+
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            String tipo = beneficiarios[i].getTipodiscapacidad();
+            boolean encontrado = false;
+            for (int j = 0; j < tiposCount; j++) {
+                if (tipos[j].equals(tipo)) {
+                    conteoDiscapacidades[j]++;
+                    encontrado = true;
+                    break;
                 }
-                if (!found) {
-                    tipos[tipoCount] = tipoDiscapacidad;
-                    conteo[tipoCount] = 1;
-                    tipoCount++;
-                }
+            }
+            if (!encontrado && tiposCount < 10) {
+                tipos[tiposCount] = tipo;
+                conteoDiscapacidades[tiposCount]++;
+                tiposCount++;
             }
         }
 
-        StringBuilder resultado = new StringBuilder("Beneficios por tipo de discapacidad:\n");
-        for (int i = 0; i < tipoCount; i++) {
-            if (tipos[i] != null) {
-                resultado.append(tipos[i]).append(": ").append(conteo[i]).append(" bono(s)\n");
-            }
+        StringBuilder reporte = new StringBuilder();
+        reporte.append("Beneficiarios por Tipo de Discapacidad\n\n");
+        for (int i = 0; i < tiposCount; i++) {
+            reporte.append(String.format("%s: %d beneficiarios\n", tipos[i], conteoDiscapacidades[i]));
         }
-        JOptionPane.showMessageDialog(this, resultado.toString(), "Beneficios por Discapacidad", JOptionPane.INFORMATION_MESSAGE);
+
+        JTextArea textArea = new JTextArea(reporte.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textArea.setBackground(new Color(245, 245, 245));
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
+        JOptionPane.showMessageDialog(this, scrollPane, "Beneficiarios por Discapacidad", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void btnMontoPorPeriodoActionPerformed(java.awt.event.ActionEvent evt) {
-        String fechaInicio = JOptionPane.showInputDialog(this, "Ingrese la fecha de inicio del periodo (dd/mm/yyyy):");
-        if (fechaInicio == null || fechaInicio.trim().isEmpty()) return;
-        String fechaFin = JOptionPane.showInputDialog(this, "Ingrese la fecha de fin del periodo (dd/mm/yyyy):");
-        if (fechaFin == null || fechaFin.trim().isEmpty()) return;
+        JTextField fechaInicioField = new JTextField(10);
+        JTextField fechaFinField = new JTextField(10);
 
-        double montoTotal = 0.0;
-        for (int i = 0; i < numBonos[0]; i++) {
-            String bonoFechaIni = bonos[i].getFechaIni();
-            String bonoFechaFin = bonos[i].getFechaFin();
-            if (bonoFechaIni.compareTo(fechaInicio) >= 0 && bonoFechaFin.compareTo(fechaFin) <= 0) {
-                montoTotal += bonos[i].getMonto();
+        JPanel panel = new JPanel(new GridLayout(2, 2));
+        panel.add(new JLabel("Fecha Inicio (dd/mm/yyyy):"));
+        panel.add(fechaInicioField);
+        panel.add(new JLabel("Fecha Fin (dd/mm/yyyy):"));
+        panel.add(fechaFinField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Monto por Período", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String fechaInicioStr = fechaInicioField.getText().trim();
+            String fechaFinStr = fechaFinField.getText().trim();
+
+            if (!validarFormatoFecha(fechaInicioStr) || !validarFormatoFecha(fechaFinStr)) {
+                JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-        }
 
-        JOptionPane.showMessageDialog(this, "Monto total pagado entre " + fechaInicio + " y " + fechaFin + ": " + montoTotal, "Monto por Periodo", JOptionPane.INFORMATION_MESSAGE);
+            double montoTotal = 0.0;
+            for (int i = 0; i < numBonos[0]; i++) {
+                for (int j = 0; j < bonos[i].getNumPagos(); j++) {
+                    String fechaPago = bonos[i].getRegisPago()[j].getFechaPago();
+                    if (!validarFormatoFecha(fechaPago)) continue;
+                    if (fechaEsDentroDelRango(fechaPago, fechaInicioStr, fechaFinStr)) {
+                        montoTotal += bonos[i].getRegisPago()[j].getMonto();
+                    }
+                }
+            }
+
+            String mensaje = String.format("Monto Total Pagado\n\nPeríodo: %s - %s\nMonto Total: %.2f", fechaInicioStr, fechaFinStr, montoTotal);
+            JOptionPane.showMessageDialog(this, mensaje, "Monto por Período", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void btnVerificarSolicitudesActionPerformed(java.awt.event.ActionEvent evt) {
-        StringBuilder resultado = new StringBuilder("Estado de las solicitudes:\n");
+        if (numBonos[0] == 0) {
+            JOptionPane.showMessageDialog(this, "No hay bonos registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        StringBuilder reporte = new StringBuilder();
+        reporte.append("Verificación de Solicitudes\n\n");
         for (int i = 0; i < numBonos[0]; i++) {
+            reporte.append(String.format("Bono: %s\n", bonos[i].getNombretipo()));
             for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
                 SolicitudBono solicitud = bonos[i].getRegisSoli()[j];
-                Beneficiario beneficiario = solicitud.getBeneficiario();
-                String estado = solicitud.getEstado();
-                String pagada = estado.equals("Aprobada") ? "Pagada" : "No pagada";
-                resultado.append("Solicitud de ").append(beneficiario.getNombre())
-                        .append(" para bono ").append(bonos[i].getNombretipo())
-                        .append(": ").append(estado).append(" (").append(pagada).append(")\n");
+                reporte.append(String.format("- Fecha: %s\n", solicitud.getFechaSolicitud()));
+                reporte.append(String.format("  Beneficiario: %s\n", solicitud.getBeneficiario() != null ? solicitud.getBeneficiario().getNombre() : "No asignado"));
+                reporte.append(String.format("  Estado: %s\n", solicitud.getEstado()));
+                reporte.append(String.format("  Pagada: %s\n", solicitud.isPagada() ? "Sí" : "No"));
             }
+            reporte.append("\n");
         }
-        JOptionPane.showMessageDialog(this, resultado.toString(), "Verificar Solicitudes", JOptionPane.INFORMATION_MESSAGE);
+
+        JTextArea textArea = new JTextArea(reporte.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textArea.setBackground(new Color(245, 245, 245));
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
+        JOptionPane.showMessageDialog(this, scrollPane, "Verificación de Solicitudes", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void btnFechasBonoBeneficiarioActionPerformed(java.awt.event.ActionEvent evt) {
         if (numBeneficiarios[0] == 0) {
-            JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String[] opciones = new String[numBeneficiarios[0]];
-        for (int i = 0; i < numBeneficiarios[0]; i++) {
-            opciones[i] = beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")";
-        }
-        String seleccion = (String) JOptionPane.showInputDialog(
-            this,
-            "Seleccione un beneficiario:",
-            "Fechas de Bonos",
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            opciones,
-            opciones[0]
-        );
-        if (seleccion == null) return;
 
-        int indice = 0;
+        JComboBox<String> beneficiarioCombo = new JComboBox<>();
         for (int i = 0; i < numBeneficiarios[0]; i++) {
-            if (opciones[i].equals(seleccion)) {
-                indice = i;
-                break;
-            }
+            beneficiarioCombo.addItem(beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
         }
 
-        Beneficiario beneficiario = beneficiarios[indice];
-        StringBuilder resultado = new StringBuilder("Bonos de " + beneficiario.getNombre() + ":\n");
-        for (int i = 0; i < numBonos[0]; i++) {
-            for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiario) {
-                    resultado.append("Bono: ").append(bonos[i].getNombretipo())
-                            .append(", Inicio: ").append(bonos[i].getFechaIni())
-                            .append(", Fin: ").append(bonos[i].getFechaFin()).append("\n");
+        JPanel panel = new JPanel(new GridLayout(1, 2));
+        panel.add(new JLabel("Seleccione Beneficiario:"));
+        panel.add(beneficiarioCombo);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Fechas de Bono por Beneficiario", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            int beneficiarioIndex = beneficiarioCombo.getSelectedIndex();
+            Beneficiario beneficiario = beneficiarios[beneficiarioIndex];
+            StringBuilder reporte = new StringBuilder();
+            reporte.append(String.format("Bonos para %s\n\n", beneficiario.getNombre()));
+
+            for (int i = 0; i < numBonos[0]; i++) {
+                for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
+                    SolicitudBono solicitud = bonos[i].getRegisSoli()[j];
+                    if (solicitud.getBeneficiario() == beneficiario) {
+                        reporte.append(String.format("Bono: %s\n", bonos[i].getNombretipo()));
+                        reporte.append(String.format("Fecha Solicitud: %s\n", solicitud.getFechaSolicitud()));
+                        reporte.append(String.format("Fecha Inicio Bono: %s\n", bonos[i].getFechaIni()));
+                        reporte.append(String.format("Fecha Fin Bono: %s\n", bonos[i].getFechaFin()));
+                        reporte.append("\n");
+                    }
                 }
             }
+
+            JTextArea textArea = new JTextArea(reporte.toString());
+            textArea.setEditable(false);
+            textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            textArea.setBackground(new Color(245, 245, 245));
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+            scrollPane.setPreferredSize(new Dimension(400, 200));
+            scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
+            JOptionPane.showMessageDialog(this, scrollPane, "Fechas de Bono por Beneficiario", JOptionPane.INFORMATION_MESSAGE);
         }
-        JOptionPane.showMessageDialog(this, resultado.toString(), "Fechas de Bonos", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void btnMultiplesBonosActionPerformed(java.awt.event.ActionEvent evt) {
-        StringBuilder resultado = new StringBuilder("Beneficiarios con múltiples bonos:\n");
-        boolean found = false;
-        for (int i = 0; i < numBeneficiarios[0]; i++) {
-            int conteo = 0;
-            for (int j = 0; j < numBonos[0]; j++) {
-                for (int k = 0; k < bonos[j].getNumSolicitudes(); k++) {
-                    if (bonos[j].getRegisSoli()[k].getBeneficiario() == beneficiarios[i]) {
-                        conteo++;
-                    }
-                }
-            }
-            if (conteo > 1) {
-                resultado.append(beneficiarios[i].getNombre()).append(": ").append(conteo).append(" bonos\n");
-                found = true;
-            }
-        }
-        if (!found) {
-            resultado.append("No hay beneficiarios con múltiples bonos.");
-        }
-        JOptionPane.showMessageDialog(this, resultado.toString(), "Múltiples Bonos", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    private void ejecutarEnConsola() {
-        System.out.println("=== Sistema Bono Dignidad - Consola ===");
-        System.out.println("Seleccione una opción:");
-        System.out.println("1. Cantidad de beneficios por tipo de discapacidad");
-        System.out.println("2. Monto total pagado por periodo");
-        System.out.println("3. Verificar solicitudes procesadas");
-        System.out.println("4. Mostrar fechas de bonos por beneficiario");
-        System.out.println("5. Mostrar beneficiarios con múltiples bonos");
-        System.out.println("0. Salir");
-
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
-        int opcion = scanner.nextInt();
-
-        switch (opcion) {
-            case 1:
-                ejecutarBeneficiosPorDiscapacidadConsola();
-                break;
-            case 2:
-                ejecutarMontoPorPeriodoConsola();
-                break;
-            case 3:
-                ejecutarVerificarSolicitudesConsola();
-                break;
-            case 4:
-                ejecutarFechasBonoBeneficiarioConsola();
-                break;
-            case 5:
-                ejecutarMultiplesBonosConsola();
-                break;
-            case 0:
-                System.out.println("Saliendo...");
-                return;
-            default:
-                System.out.println("Opción inválida.");
-        }
-        ejecutarEnConsola(); // Volver al menú
-        scanner.close();
-    }
-
-    private void ejecutarBeneficiosPorDiscapacidadConsola() {
-        int[] conteo = new int[100];
-        String[] tipos = new String[100];
-        int tipoCount = 0;
-
-        for (int i = 0; i < numBonos[0]; i++) {
-            for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                String tipoDiscapacidad = bonos[i].getRegisSoli()[j].getBeneficiario().getTipodiscapacidad();
-                boolean found = false;
-                for (int k = 0; k < tipoCount; k++) {
-                    if (tipos[k] != null && tipos[k].equals(tipoDiscapacidad)) {
-                        conteo[k]++;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    tipos[tipoCount] = tipoDiscapacidad;
-                    conteo[tipoCount] = 1;
-                    tipoCount++;
-                }
-            }
-        }
-
-        System.out.println("Beneficios por tipo de discapacidad:");
-        for (int i = 0; i < tipoCount; i++) {
-            if (tipos[i] != null) {
-                System.out.println(tipos[i] + ": " + conteo[i] + " bono(s)");
-            }
-        }
-    }
-
-    private void ejecutarMontoPorPeriodoConsola() {
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
-        System.out.print("Ingrese la fecha de inicio del periodo (dd/mm/yyyy): ");
-        String fechaInicio = scanner.next();
-        System.out.print("Ingrese la fecha de fin del periodo (dd/mm/yyyy): ");
-        String fechaFin = scanner.next();
-
-        double montoTotal = 0.0;
-        for (int i = 0; i < numBonos[0]; i++) {
-            String bonoFechaIni = bonos[i].getFechaIni();
-            String bonoFechaFin = bonos[i].getFechaFin();
-            if (bonoFechaIni.compareTo(fechaInicio) >= 0 && bonoFechaFin.compareTo(fechaFin) <= 0) {
-                montoTotal += bonos[i].getMonto();
-            }
-        }
-
-        System.out.println("Monto total pagado entre " + fechaInicio + " y " + fechaFin + ": " + montoTotal);
-    }
-
-    private void ejecutarVerificarSolicitudesConsola() {
-        System.out.println("Estado de las solicitudes:");
-        for (int i = 0; i < numBonos[0]; i++) {
-            for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                SolicitudBono solicitud = bonos[i].getRegisSoli()[j];
-                Beneficiario beneficiario = solicitud.getBeneficiario();
-                String estado = solicitud.getEstado();
-                String pagada = estado.equals("Aprobada") ? "Pagada" : "No pagada";
-                System.out.println("Solicitud de " + beneficiario.getNombre() + " para bono " + bonos[i].getNombretipo() + ": " + estado + " (" + pagada + ")");
-            }
-        }
-    }
-
-    private void ejecutarFechasBonoBeneficiarioConsola() {
         if (numBeneficiarios[0] == 0) {
-            System.out.println("No hay beneficiarios registrados.");
+            JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
-        String[] opciones = new String[numBeneficiarios[0]];
-        for (int i = 0; i < numBeneficiarios[0]; i++) {
-            opciones[i] = beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")";
-        }
-        System.out.println("Beneficiarios disponibles:");
-        for (int i = 0; i < numBeneficiarios[0]; i++) {
-            System.out.println((i + 1) + ". " + opciones[i]);
-        }
-        System.out.print("Seleccione un beneficiario (1-" + numBeneficiarios[0] + "): ");
-        int indice = scanner.nextInt() - 1;
 
-        if (indice >= 0 && indice < numBeneficiarios[0]) {
-            Beneficiario beneficiario = beneficiarios[indice];
-            System.out.println("Bonos de " + beneficiario.getNombre() + ":");
-            for (int i = 0; i < numBonos[0]; i++) {
-                for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                    if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiario) {
-                        System.out.println("Bono: " + bonos[i].getNombretipo() + ", Inicio: " + bonos[i].getFechaIni() + ", Fin: " + bonos[i].getFechaFin());
-                    }
-                }
-            }
-        } else {
-            System.out.println("Índice inválido.");
-        }
-    }
-
-    private void ejecutarMultiplesBonosConsola() {
-        System.out.println("Beneficiarios con múltiples bonos:");
-        boolean found = false;
+        StringBuilder reporte = new StringBuilder();
+        reporte.append("Beneficiarios con Múltiples Bonos\n\n");
         for (int i = 0; i < numBeneficiarios[0]; i++) {
-            int conteo = 0;
+            Beneficiario beneficiario = beneficiarios[i];
+            int conteoBonos = 0;
             for (int j = 0; j < numBonos[0]; j++) {
                 for (int k = 0; k < bonos[j].getNumSolicitudes(); k++) {
-                    if (bonos[j].getRegisSoli()[k].getBeneficiario() == beneficiarios[i]) {
-                        conteo++;
+                    if (bonos[j].getRegisSoli()[k].getBeneficiario() == beneficiario) {
+                        conteoBonos++;
                     }
                 }
             }
-            if (conteo > 1) {
-                System.out.println(beneficiarios[i].getNombre() + ": " + conteo + " bonos");
-                found = true;
+            if (conteoBonos > 1) {
+                reporte.append(String.format("%s (CI: %s) - %d bonos\n", beneficiario.getNombre(), beneficiario.getCi(), conteoBonos));
             }
         }
-        if (!found) {
-            System.out.println("No hay beneficiarios con múltiples bonos.");
+
+        JTextArea textArea = new JTextArea(reporte.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textArea.setBackground(new Color(245, 245, 245));
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
+        JOptionPane.showMessageDialog(this, scrollPane, "Beneficiarios con Múltiples Bonos", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private boolean validarFormatoFecha(String fecha) {
+        if (fecha == null || !fecha.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            return false;
+        }
+        try {
+            String[] partes = fecha.split("/");
+            int dia = Integer.parseInt(partes[0]);
+            int mes = Integer.parseInt(partes[1]);
+            int anio = Integer.parseInt(partes[2]);
+            if (dia < 1 || dia > 31 || mes < 1 || mes > 12 || anio < 1900 || anio > 2100) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
-    // Variables declaration - do not modify
-    private javax.swing.JButton btnAgregarAdministrador;
-    private javax.swing.JButton btnAgregarBeneficiario;
-    private javax.swing.JButton btnAgregarBono;
-    private javax.swing.JButton btnBorrarAdministrador;
-    private javax.swing.JButton btnBorrarBeneficiario;
-    private javax.swing.JButton btnBorrarBono;
-    private javax.swing.JButton btnGenerarReporte;
-    private javax.swing.JButton btnBeneficiosPorDiscapacidad;
-    private javax.swing.JButton btnMontoPorPeriodo;
-    private javax.swing.JButton btnVerificarSolicitudes;
-    private javax.swing.JButton btnFechasBonoBeneficiario;
-    private javax.swing.JButton btnMultiplesBonos;
-    private javax.swing.JButton btnConsola;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable tablaAdministradores;
-    private javax.swing.JTable tablaBeneficiarios;
-    private javax.swing.JTable tablaBonos;
-    // End of variables declaration
+    private boolean fechaEsDentroDelRango(String fecha, String fechaInicio, String fechaFin) {
+        try {
+            String[] partesFecha = fecha.split("/");
+            String[] partesInicio = fechaInicio.split("/");
+            String[] partesFin = fechaFin.split("/");
+
+            int dia = Integer.parseInt(partesFecha[0]);
+            int mes = Integer.parseInt(partesFecha[1]);
+            int anio = Integer.parseInt(partesFecha[2]);
+
+            int diaInicio = Integer.parseInt(partesInicio[0]);
+            int mesInicio = Integer.parseInt(partesInicio[1]);
+            int anioInicio = Integer.parseInt(partesInicio[2]);
+
+            int diaFin = Integer.parseInt(partesFin[0]);
+            int mesFin = Integer.parseInt(partesFin[1]);
+            int anioFin = Integer.parseInt(partesFin[2]);
+
+            // Convertir a un valor comparable (año * 10000 + mes * 100 + dia)
+            int valorFecha = anio * 10000 + mes * 100 + dia;
+            int valorInicio = anioInicio * 10000 + mesInicio * 100 + diaInicio;
+            int valorFin = anioFin * 10000 + mesFin * 100 + diaFin;
+
+            return valorFecha >= valorInicio && valorFecha <= valorFin;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(() -> {
+            BonoDignidad[] bonos = new BonoDignidad[MAX_REGISTROS];
+            int[] numBonos = {0};
+            Beneficiario[] beneficiarios = new Beneficiario[MAX_REGISTROS];
+            int[] numBeneficiarios = {0};
+            Administrador[] administradores = new Administrador[MAX_REGISTROS];
+            int[] numAdministradores = {0};
+
+            // Agregar datos por defecto
+            // Bonos
+            bonos[0] = new BonoDignidad("Bono Anual", "01/01/2025", "31/12/2025", 1200.50);
+            bonos[1] = new BonoDignidad("Bono Semestral", "01/01/2025", "30/06/2025", 600.00);
+            numBonos[0] = 2;
+
+            // Beneficiarios
+            beneficiarios[0] = new Beneficiario("Juan Perez", "12345678", 65, "Calle Falsa 123", "15/05/1959", "Motriz", "Moderado");
+            beneficiarios[1] = new Beneficiario("Maria Lopez", "87654321", 70, "Av. Siempre Viva 456", "22/03/1954", "Visual", "Severo");
+            beneficiarios[2] = new Beneficiario("Carlos Gomez", "11223344", 62, "Calle Luna 789", "10/11/1962", "Auditiva", "Leve");
+            numBeneficiarios[0] = 3;
+
+            // Administradores
+            administradores[0] = new Administrador("ADM001", "Coordinador", "jefe@bono.com", "01/01/2020", "Ana Torres", "99887766");
+            administradores[1] = new Administrador("ADM002", "Asistente", "asistente@bono.com", "15/06/2021", "Pedro Ruiz", "66554433");
+            numAdministradores[0] = 2;
+
+            // Asociar un beneficiario a un bono por defecto
+            SolicitudBono solicitud1 = new SolicitudBono("01/01/2025", "Aprobada", beneficiarios[0]);
+            bonos[0].agregarSolicitud(solicitud1);
+
+            new BonoDignidadGUI(bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores).setVisible(true);
+        });
+    }
 }

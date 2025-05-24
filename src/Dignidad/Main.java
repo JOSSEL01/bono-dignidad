@@ -199,12 +199,12 @@ public class Main {
     }
 
     private static void mostrarBeneficiarios() {
-        if (numBeneficiarios nöö[0] == 0) {
-            System.out.println(ANSI_YELLOW + "\nNo hay beneficiarios registrados." + ANSI_RESET);
+        if (numBeneficiarios[0] == 0) {
+            System.out.println(ANSI_YELLOW + "No hay beneficiarios registrados." + ANSI_RESET);
             return;
         }
         for (int i = 0; i < numBeneficiarios[0]; i++) {
-            System.out.println(ANSI_CYAN + "\nBeneficiario #" + (i + 1) + ANSI_RESET);
+            System.out.println(ANSI_CYAN + "Beneficiario #" + (i + 1) + ANSI_RESET);
             beneficiarios[i].mostrar();
         }
     }
@@ -395,7 +395,8 @@ public class Main {
         for (int i = 0; i < numBeneficiarios[0]; i++) {
             for (int j = 0; j < numBonos[0]; j++) {
                 for (int k = 0; k < bonos[j].getNumPagos(); k++) {
-                    if (bonos[j].getRegisPago()[k].getSolicitud().getBeneficiario() == beneficiarios[i]) {
+                    if (bonos[j].getRegisPago()[k].getSolicitud() != null && 
+                        bonos[j].getRegisPago()[k].getSolicitud().getBeneficiario() == beneficiarios[i]) {
                         System.out.println("┃ - " + beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
                         hayPagos = true;
                         break;

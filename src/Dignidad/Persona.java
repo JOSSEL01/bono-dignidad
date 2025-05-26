@@ -1,6 +1,9 @@
 package Dignidad;
 
-public abstract class Persona {
+import java.io.Serializable;
+import java.util.Scanner;
+
+public abstract class Persona implements Serializable {
     protected String nombre;
     protected String ci;
 
@@ -28,7 +31,7 @@ public abstract class Persona {
         this.ci = ci;
     }
 
-    public abstract void leer();
+    public abstract void leer(Scanner lec);
 
     public abstract void mostrar();
 }

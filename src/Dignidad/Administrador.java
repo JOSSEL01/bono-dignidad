@@ -1,14 +1,13 @@
 package Dignidad;
 
 import java.util.Scanner;
+import java.io.Serializable;
 
-public class Administrador {
+public class Administrador extends Persona implements Serializable {
     private String id;
     private String cargo;
     private String contacto;
     private String fecCreCuenta;
-    private String nombre;
-    private String ci;
 
     public Administrador() {
         this.id = "";
@@ -20,12 +19,11 @@ public class Administrador {
     }
 
     public Administrador(String id, String cargo, String contacto, String fecCreCuenta, String nombre, String ci) {
+        super(nombre, ci);
         this.id = id;
         this.cargo = cargo;
         this.contacto = contacto;
         this.fecCreCuenta = fecCreCuenta;
-        this.nombre = nombre;
-        this.ci = ci;
     }
 
     public String getId() {
@@ -44,14 +42,7 @@ public class Administrador {
         return fecCreCuenta;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getCi() {
-        return ci;
-    }
-
+    @Override
     public void leer(Scanner lec) {
         System.out.println("Ingrese el ID:");
         this.id = lec.nextLine();
@@ -67,6 +58,7 @@ public class Administrador {
         this.ci = lec.nextLine();
     }
 
+    @Override
     public void mostrar() {
         System.out.println("Administrador: " + nombre);
         System.out.println("ID: " + id);

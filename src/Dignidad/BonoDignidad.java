@@ -1,15 +1,16 @@
 package Dignidad;
 
 import java.util.Scanner;
+import java.io.Serializable;
 
-public class BonoDignidad {
+public class BonoDignidad implements Serializable {
     private String nombretipo;
     private String fechaIni;
     private String fechaFin;
     private double monto;
     private SolicitudBono[] regisSoli;
     private int numSolicitudes;
-    private Pago[] regisPago;
+    private PagoBono[] regisPago;
     private int numPagos;
 
     public BonoDignidad() {
@@ -19,7 +20,7 @@ public class BonoDignidad {
         this.monto = 0.0;
         this.regisSoli = new SolicitudBono[100];
         this.numSolicitudes = 0;
-        this.regisPago = new Pago[100];
+        this.regisPago = new PagoBono[100];
         this.numPagos = 0;
     }
 
@@ -30,7 +31,7 @@ public class BonoDignidad {
         this.monto = monto;
         this.regisSoli = new SolicitudBono[100];
         this.numSolicitudes = 0;
-        this.regisPago = new Pago[100];
+        this.regisPago = new PagoBono[100];
         this.numPagos = 0;
     }
 
@@ -67,12 +68,12 @@ public class BonoDignidad {
         this.numSolicitudes = numSolicitudes;
     }
 
-    public void agregarPago(Pago pago) {
+    public void agregarPago(PagoBono pago) {
         regisPago[numPagos] = pago;
         numPagos++;
     }
 
-    public Pago[] getRegisPago() {
+    public PagoBono[] getRegisPago() {
         return regisPago;
     }
 

@@ -1,6 +1,8 @@
 package Dignidad;
 
-public class SolicitudBono {
+import java.io.Serializable;
+
+public class SolicitudBono implements Serializable {
     private String fechaSolicitud;
     private String estado;
     private Beneficiario beneficiario;

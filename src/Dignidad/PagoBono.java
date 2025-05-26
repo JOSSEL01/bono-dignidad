@@ -1,6 +1,8 @@
 package Dignidad;
 
-public class PagoBono {
+import java.io.Serializable;
+
+public class PagoBono implements Serializable {
     private String fechaPago;
     private double monto;
     private SolicitudBono solicitud;

@@ -1,10 +1,9 @@
 package Dignidad;
 
 import java.util.Scanner;
+import java.io.Serializable;
 
-public class Beneficiario {
-    private String nombre;
-    private String ci;
+public class Beneficiario extends Persona implements Serializable {
     private int edad;
     private String direccion;
     private String fecha_nacimiento;
@@ -22,21 +21,12 @@ public class Beneficiario {
     }
 
     public Beneficiario(String nombre, String ci, int edad, String direccion, String fecha_nacimiento, String tipodiscapacidad, String gradodiscapacidad) {
-        this.nombre = nombre;
-        this.ci = ci;
+        super(nombre, ci);
         this.edad = edad;
         this.direccion = direccion;
         this.fecha_nacimiento = fecha_nacimiento;
         this.tipodiscapacidad = tipodiscapacidad;
         this.gradodiscapacidad = gradodiscapacidad;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getCi() {
-        return ci;
     }
 
     public int getEdad() {
@@ -59,6 +49,7 @@ public class Beneficiario {
         return gradodiscapacidad;
     }
 
+    @Override
     public void leer(Scanner lec) {
         System.out.println("Ingrese el nombre:");
         this.nombre = lec.nextLine();
@@ -76,6 +67,7 @@ public class Beneficiario {
         this.gradodiscapacidad = lec.nextLine();
     }
 
+    @Override
     public void mostrar() {
         System.out.println("Beneficiario: " + nombre);
         System.out.println("CI: " + ci);

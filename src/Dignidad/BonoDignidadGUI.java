@@ -51,7 +51,7 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
     private JButton btnFechasBonoBeneficiario;
     private JButton btnMultiplesBonos;
     private JButton btnTiempoTotalPago;
-
+    
     public BonoDignidadGUI(BonoDignidad[] bonos, int[] numBonos, Beneficiario[] beneficiarios, int[] numBeneficiarios, Administrador[] administradores, int[] numAdministradores) {
         this.bonos = bonos;
         this.numBonos = numBonos;
@@ -59,11 +59,12 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
         this.numBeneficiarios = numBeneficiarios;
         this.administradores = administradores;
         this.numAdministradores = numAdministradores;
+        // Load data from CSV files
+        Persistencia.cargarDatos(bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
         initComponents();
         cargarDatosEnTablas();
         customDesign();
     }
-
     private void customDesign() {
         backgroundPanel.setOpaque(false);
 
@@ -218,7 +219,6 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             boton.setIconTextGap(10);
         }
     }
-
     private void cargarDatosEnTablas() {
         tablaBonos.setModel(new javax.swing.table.DefaultTableModel(
             new Object[][] {},
@@ -268,7 +268,6 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             });
         }
     }
-
     @SuppressWarnings("unchecked")
     private void initComponents() {
         backgroundPanel = new javax.swing.JPanel();
@@ -418,7 +417,6 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }
-
     private void btnAgregarBonoActionPerformed(java.awt.event.ActionEvent evt) {
         if (numBonos[0] >= MAX_REGISTROS) {
             JOptionPane.showMessageDialog(this, "No se pueden agregar más bonos, límite alcanzado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -465,8 +463,7 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                     SolicitudBono solicitud = new SolicitudBono(fechaIni, "Aprobada", beneficiarios[beneficiarioIndex]);
                     bono.agregarSolicitud(solicitud);
                 }
-                bonos[numBonos[0]] = bono;
-                numBonos[0]++;
+                Persistencia.agregarBono(bonos, numBonos, bono, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                 cargarDatosEnTablas();
                 JOptionPane.showMessageDialog(this, "Bono registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException e) {
@@ -530,13 +527,13 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                bono = new BonoDignidad(tipo, fechaIni, fechaFin, monto);
+                BonoDignidad nuevoBono = new BonoDignidad(tipo, fechaIni, fechaFin, monto);
                 int beneficiarioIndex = beneficiarioCombo.getSelectedIndex() - 1;
                 if (beneficiarioIndex >= 0) {
                     SolicitudBono solicitud = new SolicitudBono(fechaIni, "Aprobada", beneficiarios[beneficiarioIndex]);
-                    bono.agregarSolicitud(solicitud);
+                    nuevoBono.agregarSolicitud(solicitud);
                 }
-                bonos[selectedRow] = bono;
+                Persistencia.editarBono(bonos, numBonos, selectedRow, nuevoBono, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                 cargarDatosEnTablas();
                 JOptionPane.showMessageDialog(this, "Bono editado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException e) {
@@ -557,11 +554,7 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
         }
         int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de borrar este bono?", "Confirmar Borrado", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            for (int i = selectedRow; i < numBonos[0] - 1; i++) {
-                bonos[i] = bonos[i + 1];
-            }
-            bonos[numBonos[0] - 1] = null;
-            numBonos[0]--;
+            Persistencia.borrarBono(bonos, numBonos, selectedRow, beneficiarios, numBeneficiarios, administradores, numAdministradores);
             cargarDatosEnTablas();
             JOptionPane.showMessageDialog(this, "Bono eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -633,8 +626,7 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                     return;
                 }
                 PagoBono pago = new PagoBono(fechaPago, monto, solicitudSeleccionada);
-                bonoSeleccionado.agregarPago(pago);
-                solicitudSeleccionada.setPagada(true);
+                Persistencia.agregarPago(bonoSeleccionado, pago, bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                 JOptionPane.showMessageDialog(this, "Pago registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "El monto debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -666,12 +658,11 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             }
             int beneficiarioIndex = beneficiarioCombo.getSelectedIndex();
             SolicitudBono solicitud = new SolicitudBono(fechaSolicitud, "Aprobada", beneficiarios[beneficiarioIndex]);
-            bono.agregarSolicitud(solicitud);
+            Persistencia.agregarSolicitud(bono, solicitud, bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
             return solicitud;
         }
         return null;
     }
-
     private void btnAgregarBeneficiarioActionPerformed(java.awt.event.ActionEvent evt) {
         if (numBeneficiarios[0] >= MAX_REGISTROS) {
             JOptionPane.showMessageDialog(this, "No se pueden agregar más beneficiarios, límite alcanzado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -718,8 +709,7 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                     return;
                 }
                 Beneficiario beneficiario = new Beneficiario(nombre, ci, edad, direccion, fechaNac, tipoDisc, gradoDisc);
-                beneficiarios[numBeneficiarios[0]] = beneficiario;
-                numBeneficiarios[0]++;
+                Persistencia.agregarBeneficiario(beneficiarios, numBeneficiarios, beneficiario, bonos, numBonos, administradores, numAdministradores);
                 cargarDatosEnTablas();
                 JOptionPane.showMessageDialog(this, "Beneficiario registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException e) {
@@ -779,7 +769,8 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                beneficiarios[selectedRow] = new Beneficiario(nombre, ci, edad, direccion, fechaNac, tipoDisc, gradoDisc);
+                Beneficiario nuevoBeneficiario = new Beneficiario(nombre, ci, edad, direccion, fechaNac, tipoDisc, gradoDisc);
+                Persistencia.editarBeneficiario(beneficiarios, numBeneficiarios, selectedRow, nuevoBeneficiario, bonos, numBonos, administradores, numAdministradores);
                 cargarDatosEnTablas();
                 JOptionPane.showMessageDialog(this, "Beneficiario editado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException e) {
@@ -800,27 +791,11 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
         }
         int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de borrar este beneficiario?", "Confirmar Borrado", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            for (int i = 0; i < numBonos[0]; i++) {
-                for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                    if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiarios[selectedRow]) {
-                        for (int k = j; k < bonos[i].getNumSolicitudes() - 1; k++) {
-                            bonos[i].getRegisSoli()[k] = bonos[i].getRegisSoli()[k + 1];
-                        }
-                        bonos[i].getRegisSoli()[bonos[i].getNumSolicitudes() - 1] = null;
-                        bonos[i].setNumSolicitudes(bonos[i].getNumSolicitudes() - 1);
-                    }
-                }
-            }
-            for (int i = selectedRow; i < numBeneficiarios[0] - 1; i++) {
-                beneficiarios[i] = beneficiarios[i + 1];
-            }
-            beneficiarios[numBeneficiarios[0] - 1] = null;
-            numBeneficiarios[0]--;
+            Persistencia.borrarBeneficiario(beneficiarios, numBeneficiarios, selectedRow, bonos, numBonos, administradores, numAdministradores);
             cargarDatosEnTablas();
             JOptionPane.showMessageDialog(this, "Beneficiario y solicitudes asociadas eliminados exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
     private void btnAgregarAdministradorActionPerformed(java.awt.event.ActionEvent evt) {
         if (numAdministradores[0] >= MAX_REGISTROS) {
             JOptionPane.showMessageDialog(this, "No se pueden agregar más administradores, límite alcanzado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -862,8 +837,7 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                 return;
             }
             Administrador administrador = new Administrador(id, cargo, contacto, fechaCreacion, nombre, ci);
-            administradores[numAdministradores[0]] = administrador;
-            numAdministradores[0]++;
+            Persistencia.agregarAdministrador(administradores, numAdministradores, administrador, bonos, numBonos, beneficiarios, numBeneficiarios);
             cargarDatosEnTablas();
             JOptionPane.showMessageDialog(this, "Administrador registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -915,7 +889,8 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            administradores[selectedRow] = new Administrador(id, cargo, contacto, fechaCreacion, nombre, ci);
+            Administrador nuevoAdmin = new Administrador(id, cargo, contacto, fechaCreacion, nombre, ci);
+            Persistencia.editarAdministrador(administradores, numAdministradores, selectedRow, nuevoAdmin, bonos, numBonos, beneficiarios, numBeneficiarios);
             cargarDatosEnTablas();
             JOptionPane.showMessageDialog(this, "Administrador editado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -933,16 +908,11 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
         }
         int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de borrar este administrador?", "Confirmar Borrado", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            for (int i = selectedRow; i < numAdministradores[0] - 1; i++) {
-                administradores[i] = administradores[i + 1];
-            }
-            administradores[numAdministradores[0] - 1] = null;
-            numAdministradores[0]--;
+            Persistencia.borrarAdministrador(administradores, numAdministradores, selectedRow, bonos, numBonos, beneficiarios, numBeneficiarios);
             cargarDatosEnTablas();
             JOptionPane.showMessageDialog(this, "Administrador eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {
         StringBuilder reporte = new StringBuilder();
         reporte.append("Reporte del Sistema Bono Dignidad\n\n");
@@ -1016,45 +986,35 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
     private void btnMontoPorPeriodoActionPerformed(java.awt.event.ActionEvent evt) {
         JTextField fechaInicioField = new JTextField(10);
         JTextField fechaFinField = new JTextField(10);
-
         JPanel panel = new JPanel(new GridLayout(2, 2));
         panel.add(new JLabel("Fecha Inicio (dd/mm/yyyy):"));
         panel.add(fechaInicioField);
         panel.add(new JLabel("Fecha Fin (dd/mm/yyyy):"));
         panel.add(fechaFinField);
-
         int result = JOptionPane.showConfirmDialog(this, panel, "Monto por Período", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             String fechaInicioStr = fechaInicioField.getText().trim();
             String fechaFinStr = fechaFinField.getText().trim();
-
             if (!validarFormatoFecha(fechaInicioStr) || !validarFormatoFecha(fechaFinStr)) {
                 JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use DD/MM/AAAA.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
             StringBuilder reporte = new StringBuilder();
             reporte.append("REPORTE DETALLADO DE PAGOS POR PERÍODO\n\n");
             reporte.append(String.format("Período: %s - %s\n\n", fechaInicioStr, fechaFinStr));
-            
             double montoTotal = 0.0;
             int totalPagos = 0;
-            
             reporte.append("Detalle de pagos:\n");
             reporte.append("--------------------------------------------------\n");
-            
             for (int i = 0; i < numBonos[0]; i++) {
                 double montoBono = 0.0;
                 int pagosBono = 0;
-                
                 for (int j = 0; j < bonos[i].getNumPagos(); j++) {
                     String fechaPago = bonos[i].getRegisPago()[j].getFechaPago();
                     if (!validarFormatoFecha(fechaPago)) continue;
-                    
                     if (fechaEsDentroDelRango(fechaPago, fechaInicioStr, fechaFinStr)) {
                         double montoPago = bonos[i].getRegisPago()[j].getMonto();
                         Beneficiario beneficiario = bonos[i].getRegisPago()[j].getSolicitud().getBeneficiario();
-                        
                         reporte.append(String.format("Bono: %s\n", bonos[i].getNombretipo()));
                         reporte.append(String.format("Fecha Pago: %s\n", fechaPago));
                         reporte.append(String.format("Monto: $%.2f\n", montoPago));
@@ -1063,29 +1023,24 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                                 beneficiario.getNombre(), beneficiario.getCi()));
                         }
                         reporte.append("--------------------------------------------------\n");
-                        
                         montoBono += montoPago;
                         montoTotal += montoPago;
                         pagosBono++;
                         totalPagos++;
                     }
                 }
-                
                 if (pagosBono > 0) {
                     reporte.append(String.format("Total para bono '%s': $%.2f (%d pagos)\n\n", 
                         bonos[i].getNombretipo(), montoBono, pagosBono));
                 }
             }
-
             reporte.append("\nRESUMEN FINAL\n");
             reporte.append("--------------------------------------------------\n");
             reporte.append(String.format("Total pagos realizados: %d\n", totalPagos));
             reporte.append(String.format("Monto total pagado: $%.2f\n", montoTotal));
-            
             if (totalPagos == 0) {
                 reporte.append("\nNo se encontraron pagos en el período especificado.\n");
             }
-
             mostrarReporteEnDialogo(reporte.toString(), "Reporte Detallado de Pagos");
         }
     }
@@ -1153,21 +1108,17 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         JComboBox<String> beneficiarioCombo = new JComboBox<>();
         for (int i = 0; i < numBeneficiarios[0]; i++) {
             beneficiarioCombo.addItem(beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
         }
-
         JPanel panel = new JPanel(new GridLayout(1, 2));
         panel.add(new JLabel("Seleccione Beneficiario:"));
         panel.add(beneficiarioCombo);
-
         int result = JOptionPane.showConfirmDialog(this, panel, "Múltiples Bonos", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             int beneficiarioIndex = beneficiarioCombo.getSelectedIndex();
             Beneficiario beneficiario = beneficiarios[beneficiarioIndex];
-
             StringBuilder reporte = new StringBuilder();
             reporte.append("REPORTE DETALLADO DE BONOS PARA BENEFICIARIO\n\n");
             reporte.append(String.format("Beneficiario: %s\n", beneficiario.getNombre()));
@@ -1175,20 +1126,16 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             reporte.append(String.format("Edad: %d\n", beneficiario.getEdad()));
             reporte.append(String.format("Tipo Discapacidad: %s\n", beneficiario.getTipodiscapacidad()));
             reporte.append(String.format("Grado Discapacidad: %s\n\n", beneficiario.getGradodiscapacidad()));
-            
             reporte.append("BONOS ASIGNADOS:\n");
             reporte.append("--------------------------------------------------\n");
-            
             boolean tieneBonos = false;
             double montoTotal = 0.0;
             int totalBonos = 0;
-
             for (int i = 0; i < numBonos[0]; i++) {
                 boolean tieneBono = false;
                 int solicitudesParaEsteBono = 0;
                 double montoPagado = 0.0;
                 int pagosRealizados = 0;
-                
                 for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
                     if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiario) {
                         if (!tieneBono) {
@@ -1200,17 +1147,14 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                             tieneBono = true;
                             totalBonos++;
                         }
-                        
                         SolicitudBono solicitud = bonos[i].getRegisSoli()[j];
                         reporte.append(String.format("  - Fecha: %s, Estado: %s, Pagada: %s\n", 
                             solicitud.getFechaSolicitud(), 
                             solicitud.getEstado(),
                             solicitud.isPagada() ? "Sí" : "No"));
-                        
                         solicitudesParaEsteBono++;
                     }
                 }
-
                 if (tieneBono) {
                     reporte.append("Pagos:\n");
                     for (int j = 0; j < bonos[i].getNumPagos(); j++) {
@@ -1232,7 +1176,6 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                     tieneBonos = true;
                 }
             }
-
             if (tieneBonos) {
                 reporte.append("\nRESUMEN FINAL\n");
                 reporte.append("--------------------------------------------------\n");
@@ -1241,7 +1184,6 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             } else {
                 reporte.append("\nEl beneficiario no tiene bonos asignados.\n");
             }
-
             mostrarReporteEnDialogo(reporte.toString(), "Reporte de Bonos por Beneficiario");
         }
     }
@@ -1251,34 +1193,28 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No hay beneficiarios registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         JComboBox<String> beneficiarioCombo = new JComboBox<>();
         for (int i = 0; i < numBeneficiarios[0]; i++) {
             beneficiarioCombo.addItem(beneficiarios[i].getNombre() + " (CI: " + beneficiarios[i].getCi() + ")");
         }
-
         JPanel panel = new JPanel(new GridLayout(1, 2));
         panel.add(new JLabel("Seleccione Beneficiario:"));
         panel.add(beneficiarioCombo);
-
         int result = JOptionPane.showConfirmDialog(this, panel, "Tiempo Total de Pago", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             int beneficiarioIndex = beneficiarioCombo.getSelectedIndex();
             Beneficiario beneficiario = beneficiarios[beneficiarioIndex];
-
             String earliestDate = null;
             String latestDate = null;
             long earliestValue = Long.MAX_VALUE;
             long latestValue = Long.MIN_VALUE;
             int paymentCount = 0;
-
             for (int i = 0; i < numBonos[0]; i++) {
                 for (int j = 0; j < bonos[i].getNumPagos(); j++) {
                     PagoBono pago = bonos[i].getRegisPago()[j];
                     if (pago.getSolicitud() != null && pago.getSolicitud().getBeneficiario() == beneficiario) {
                         String fechaPago = pago.getFechaPago();
                         if (!validarFormatoFecha(fechaPago)) continue;
-
                         long fechaValue = convertirFechaAValor(fechaPago);
                         if (fechaValue < earliestValue) {
                             earliestValue = fechaValue;
@@ -1292,58 +1228,24 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                     }
                 }
             }
-
             StringBuilder reporte = new StringBuilder();
-            reporte.append("TIEMPO TOTAL DE PAGOS PARA BENEFICIARIO\n\n");
-            reporte.append(String.format("Beneficiario: %s (CI: %s)\n\n", beneficiario.getNombre(), beneficiario.getCi()));
-
-            if (paymentCount == 0) {
-                reporte.append("No se encontraron pagos para este beneficiario.\n");
+            reporte.append("Tiempo Total de Pago para " + beneficiario.getNombre() + "\n\n");
+            if (paymentCount > 0 && earliestDate != null && latestDate != null) {
+                long diffMillis = Math.abs(latestValue - earliestValue);
+                long diffDays = diffMillis / (1000 * 60 * 60 * 24);
+                long years = diffDays / 365;
+                long months = (diffDays % 365) / 30;
+                long days = (diffDays % 365) % 30;
+                reporte.append(String.format("Primer Pago: %s\n", earliestDate));
+                reporte.append(String.format("Último Pago: %s\n", latestDate));
+                reporte.append(String.format("Duración Total: %d años, %d meses, %d días\n", years, months, days));
+                reporte.append(String.format("Total de Pagos: %d\n", paymentCount));
             } else {
-                long daysBetween = calcularDiasEntreFechas(earliestDate, latestDate);
-                reporte.append(String.format("Primer pago: %s\n", earliestDate));
-                reporte.append(String.format("Último pago: %s\n", latestDate));
-                reporte.append(String.format("Total de pagos: %d\n", paymentCount));
-                reporte.append(String.format("Tiempo total entre pagos: %d días\n", daysBetween));
+                reporte.append("No se encontraron pagos para este beneficiario.\n");
             }
-
             mostrarReporteEnDialogo(reporte.toString(), "Tiempo Total de Pago");
         }
     }
-
-    private long calcularDiasEntreFechas(String fechaInicio, String fechaFin) {
-        try {
-            String[] partesInicio = fechaInicio.split("/");
-            String[] partesFin = fechaFin.split("/");
-            java.time.LocalDate inicio = java.time.LocalDate.of(
-                Integer.parseInt(partesInicio[2]),
-                Integer.parseInt(partesInicio[1]),
-                Integer.parseInt(partesInicio[0])
-            );
-            java.time.LocalDate fin = java.time.LocalDate.of(
-                Integer.parseInt(partesFin[2]),
-                Integer.parseInt(partesFin[1]),
-                Integer.parseInt(partesFin[0])
-            );
-            return java.time.temporal.ChronoUnit.DAYS.between(inicio, fin);
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    private void mostrarReporteEnDialogo(String contenido, String titulo) {
-        JTextArea textArea = new JTextArea(contenido);
-        textArea.setEditable(false);
-        textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        textArea.setBackground(new Color(245, 245, 245));
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        scrollPane.setPreferredSize(new Dimension(600, 400));
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
-        JOptionPane.showMessageDialog(this, scrollPane, titulo, JOptionPane.INFORMATION_MESSAGE);
-    }
-
     private boolean validarFormatoFecha(String fecha) {
         if (fecha == null || !fecha.matches("\\d{2}/\\d{2}/\\d{4}")) {
             return false;
@@ -1357,16 +1259,28 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
                 return false;
             }
             return true;
-        } catch (Exception e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             return false;
         }
     }
 
-    private boolean fechaEsDentroDelRango(String fecha, String fechaInicio, String fechaFin) {
-        long valorFecha = convertirFechaAValor(fecha);
-        long valorInicio = convertirFechaAValor(fechaInicio);
-        long valorFin = convertirFechaAValor(fechaFin);
-        return valorFecha >= valorInicio && valorFecha <= valorFin;
+    private void mostrarReporteEnDialogo(String contenido, String titulo) {
+        JTextArea textArea = new JTextArea(contenido);
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(600, 400));
+        JOptionPane.showMessageDialog(this, scrollPane, titulo, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private boolean fechaEsDentroDelRango(String fechaPago, String fechaInicio, String fechaFin) {
+        if (!validarFormatoFecha(fechaPago) || !validarFormatoFecha(fechaInicio) || !validarFormatoFecha(fechaFin)) {
+            return false;
+        }
+        long valorFechaPago = convertirFechaAValor(fechaPago);
+        long valorFechaInicio = convertirFechaAValor(fechaInicio);
+        long valorFechaFin = convertirFechaAValor(fechaFin);
+        return valorFechaPago >= valorFechaInicio && valorFechaPago <= valorFechaFin;
     }
 
     private long convertirFechaAValor(String fecha) {
@@ -1376,21 +1290,9 @@ public class BonoDignidadGUI extends javax.swing.JFrame {
             int mes = Integer.parseInt(partes[1]);
             int anio = Integer.parseInt(partes[2]);
             return anio * 10000L + mes * 100L + dia;
-        } catch (Exception e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             return 0;
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            BonoDignidad[] bonos = new BonoDignidad[MAX_REGISTROS];
-            int[] numBonos = new int[1];
-            Beneficiario[] beneficiarios = new Beneficiario[MAX_REGISTROS];
-            int[] numBeneficiarios = new int[1];
-            Administrador[] administradores = new Administrador[MAX_REGISTROS];
-            int[] numAdministradores = new int[1];
-            BonoDignidadGUI gui = new BonoDignidadGUI(bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
-            gui.setVisible(true);
-        });
-    }
 }

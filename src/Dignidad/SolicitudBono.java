@@ -34,4 +34,8 @@ public class SolicitudBono implements Serializable {
     public void setPagada(boolean pagada) {
         this.pagada = pagada;
     }
+
+    public void setBeneficiario(Beneficiario beneficiario) {
+        this.beneficiario = beneficiario;
+    }
 }

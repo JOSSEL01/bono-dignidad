@@ -81,6 +81,18 @@ public class BonoDignidad implements Serializable {
         return numPagos;
     }
 
+    public void setRegisSoli(SolicitudBono[] regisSoli) {
+        this.regisSoli = regisSoli;
+    }
+
+    public void setRegisPago(PagoBono[] regisPago) {
+        this.regisPago = regisPago;
+    }
+
+    public void setNumPagos(int numPagos) {
+        this.numPagos = numPagos;
+    }
+
     public void leer(Beneficiario[] beneficiarios, int numBeneficiarios, Scanner lec) {
         System.out.println("Ingrese el tipo de bono:");
         this.nombretipo = lec.nextLine();

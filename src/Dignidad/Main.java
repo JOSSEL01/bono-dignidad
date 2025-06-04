@@ -49,7 +49,6 @@ public class Main {
             System.out.println(ANSI_YELLOW + "Opción no válida. El programa se cerrará." + ANSI_RESET);
         }
 
-        Persistencia.guardarDatos(bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
         lec.close();
     }
 
@@ -61,98 +60,98 @@ public class Main {
         }
     }
 
-private static void ejecutarModoConsola() {
-    int opcion;
-    do {
-        mostrarMenu();
-        opcion = obtenerOpcion();
-        switch (opcion) {
-            case 1:
-                registrarBono();
-                break;
-            case 2:
-                registrarBeneficiario();
-                break;
-            case 3:
-                registrarAdministrador();
-                break;
-            case 4:
-                mostrarBonos();
-                break;
-            case 5:
-                mostrarBeneficiarios();
-                break;
-            case 6:
-                mostrarAdministradores();
-                break;
-            case 7:
-                mostrarBeneficiariosPorTipoDiscapacidad();
-                break;
-            case 8:
-                calcularMontoTotalPorPeriodo();
-                break;
-            case 9:
-                verificarSolicitudesProcesadas();
-                break;
-            case 10:
-                mostrarFechasBonoBeneficiario();
-                break;
-            case 11:
-                listarBeneficiariosConPagos();
-                break;
-            case 12:
-                System.out.println(ANSI_YELLOW + "Saliendo del sistema..." + ANSI_RESET);
-                break;
-            case 13:
-                borrarRegistro();
-                break;
-            case 14:
-                registrarPagoConsola();
-                break;
-            case 15:
-                generarReporteGeneral();
-                break;
-            case 16:
-                mostrarBeneficiariosPorTipoDiscapacidad(); // Corrected to match the existing method
-                break;
-            case 17:
-                calcularMontoTotalPorPeriodo();
-                break;
-            case 18:
-                verificarSolicitudesProcesadas();
-                break;
-            case 19:
-                mostrarFechasBonoBeneficiario();
-                break;
-            case 20:
-                mostrarBeneficiariosConMultiplesBonos();
-                break;
-            case 21:
-                calcularTiempoTotalPago();
-                break;
-            case 22:
-                editarBonoConsola();
-                break;
-            case 23:
-                editarBeneficiarioConsola();
-                break;
-            case 24:
-                editarAdministradorConsola();
-                break;
-            case 25:
-                borrarBonoConsola();
-                break;
-            case 26:
-                borrarBeneficiarioConsola();
-                break;
-            case 27:
-                borrarAdministradorConsola();
-                break;
-            default:
-                System.out.println(ANSI_YELLOW + "Opción no válida. Intente de nuevo." + ANSI_RESET);
-        }
-    } while (opcion != 12);
-}
+    private static void ejecutarModoConsola() {
+        int opcion;
+        do {
+            mostrarMenu();
+            opcion = obtenerOpcion();
+            switch (opcion) {
+                case 1:
+                    registrarBono();
+                    break;
+                case 2:
+                    registrarBeneficiario();
+                    break;
+                case 3:
+                    registrarAdministrador();
+                    break;
+                case 4:
+                    mostrarBonos();
+                    break;
+                case 5:
+                    mostrarBeneficiarios();
+                    break;
+                case 6:
+                    mostrarAdministradores();
+                    break;
+                case 7:
+                    mostrarBeneficiariosPorTipoDiscapacidad();
+                    break;
+                case 8:
+                    calcularMontoTotalPorPeriodo();
+                    break;
+                case 9:
+                    verificarSolicitudesProcesadas();
+                    break;
+                case 10:
+                    mostrarFechasBonoBeneficiario();
+                    break;
+                case 11:
+                    listarBeneficiariosConPagos();
+                    break;
+                case 12:
+                    System.out.println(ANSI_YELLOW + "Saliendo del sistema..." + ANSI_RESET);
+                    break;
+                case 13:
+                    borrarRegistro();
+                    break;
+                case 14:
+                    registrarPagoConsola();
+                    break;
+                case 15:
+                    generarReporteGeneral();
+                    break;
+                case 16:
+                    mostrarBeneficiariosPorTipoDiscapacidad();
+                    break;
+                case 17:
+                    calcularMontoTotalPorPeriodo();
+                    break;
+                case 18:
+                    verificarSolicitudesProcesadas();
+                    break;
+                case 19:
+                    mostrarFechasBonoBeneficiario();
+                    break;
+                case 20:
+                    mostrarBeneficiariosConMultiplesBonos();
+                    break;
+                case 21:
+                    calcularTiempoTotalPago();
+                    break;
+                case 22:
+                    editarBonoConsola();
+                    break;
+                case 23:
+                    editarBeneficiarioConsola();
+                    break;
+                case 24:
+                    editarAdministradorConsola();
+                    break;
+                case 25:
+                    borrarBonoConsola();
+                    break;
+                case 26:
+                    borrarBeneficiarioConsola();
+                    break;
+                case 27:
+                    borrarAdministradorConsola();
+                    break;
+                default:
+                    System.out.println(ANSI_YELLOW + "Opción no válida. Intente de nuevo." + ANSI_RESET);
+            }
+        } while (opcion != 12);
+    }
 
     private static void ejecutarModoGrafico() {
         java.awt.EventQueue.invokeLater(() -> {
@@ -171,7 +170,7 @@ private static void ejecutarModoConsola() {
         System.out.println(ANSI_GREEN + "┃ 5. Mostrar Beneficiarios           ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 6. Mostrar Administradores         ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 7. Beneficiarios por Discapacidad  ┃" + ANSI_RESET);
-        System.out.println(ANSI_GREEN + "┃ 8. Monto Total Pagado por Período  ┃" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "┃ 8. Monto Total Pagado por Periodo  ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 9. Verificar Solicitudes Pagadas   ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 10. Fechas de Bono por Beneficiario┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 11. Beneficiarios con Pagos        ┃" + ANSI_RESET);
@@ -180,10 +179,10 @@ private static void ejecutarModoConsola() {
         System.out.println(ANSI_GREEN + "┃ 14. Registrar Pago                 ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 15. Generar Reporte General        ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 16. Beneficiarios por Discapacidad ┃" + ANSI_RESET);
-        System.out.println(ANSI_GREEN + "┃ 17. Monto por Período              ┃" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "┃ 17. Monto por Periodo              ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 18. Verificar Solicitudes          ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 19. Fechas por Beneficiario        ┃" + ANSI_RESET);
-        System.out.println(ANSI_GREEN + "┃ 20. Múltiples Bonos                ┃" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "┃ 20. Multiples Bonos                ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 21. Tiempo Total Pago              ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 22. Editar Bono                    ┃" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "┃ 23. Editar Beneficiario            ┃" + ANSI_RESET);
@@ -210,8 +209,7 @@ private static void ejecutarModoConsola() {
         }
         BonoDignidad bono = new BonoDignidad();
         bono.leer(beneficiarios, numBeneficiarios[0], lec);
-        bonos[numBonos[0]] = bono;
-        numBonos[0]++;
+        Persistencia.agregarBono(bonos, numBonos, bono, beneficiarios, numBeneficiarios, administradores, numAdministradores);
         System.out.println(ANSI_GREEN + "Bono registrado exitosamente." + ANSI_RESET);
     }
 
@@ -223,8 +221,7 @@ private static void ejecutarModoConsola() {
         }
         Beneficiario beneficiario = new Beneficiario();
         beneficiario.leer(lec);
-        beneficiarios[numBeneficiarios[0]] = beneficiario;
-        numBeneficiarios[0]++;
+        Persistencia.agregarBeneficiario(beneficiarios, numBeneficiarios, beneficiario, bonos, numBonos, administradores, numAdministradores);
         System.out.println(ANSI_GREEN + "Beneficiario registrado exitosamente." + ANSI_RESET);
     }
 
@@ -236,8 +233,7 @@ private static void ejecutarModoConsola() {
         }
         Administrador administrador = new Administrador();
         administrador.leer(lec);
-        administradores[numAdministradores[0]] = administrador;
-        numAdministradores[0]++;
+        Persistencia.agregarAdministrador(administradores, numAdministradores, administrador, bonos, numBonos, beneficiarios, numBeneficiarios);
         System.out.println(ANSI_GREEN + "Administrador registrado exitosamente." + ANSI_RESET);
     }
 
@@ -274,41 +270,41 @@ private static void ejecutarModoConsola() {
         }
     }
 
-private static void mostrarBeneficiariosPorTipoDiscapacidad() {
-    if (numBeneficiarios[0] == 0) {
-        System.out.println(ANSI_YELLOW + "\nNo hay beneficiarios registrados." + ANSI_RESET);
-        return;
-    }
+    private static void mostrarBeneficiariosPorTipoDiscapacidad() {
+        if (numBeneficiarios[0] == 0) {
+            System.out.println(ANSI_YELLOW + "\nNo hay beneficiarios registrados." + ANSI_RESET);
+            return;
+        }
 
-    int[] conteoDiscapacidades = new int[10];
-    String[] tipos = new String[10];
-    int tiposCount = 0;
+        int[] conteoDiscapacidades = new int[10];
+        String[] tipos = new String[10];
+        int tiposCount = 0;
 
-    for (int i = 0; i < numBeneficiarios[0]; i++) {
-        String tipo = beneficiarios[i].getTipodiscapacidad();
-        boolean encontrado = false;
-        for (int j = 0; j < tiposCount; j++) {
-            if (tipos[j].equals(tipo)) {
-                conteoDiscapacidades[j]++;
-                encontrado = true;
-                break;
+        for (int i = 0; i < numBeneficiarios[0]; i++) {
+            String tipo = beneficiarios[i].getTipodiscapacidad();
+            boolean encontrado = false;
+            for (int j = 0; j < tiposCount; j++) {
+                if (tipos[j].equals(tipo)) {
+                    conteoDiscapacidades[j]++;
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (!encontrado && tiposCount < 10) {
+                tipos[tiposCount] = tipo;
+                conteoDiscapacidades[tiposCount]++;
+                tiposCount++;
             }
         }
-        if (!encontrado && tiposCount < 10) {
-            tipos[tiposCount] = tipo;
-            conteoDiscapacidades[tiposCount]++;
-            tiposCount++;
-        }
-    }
 
-    System.out.println(ANSI_CYAN + "\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" + ANSI_RESET);
-    System.out.println(ANSI_CYAN + "┃  BENEFICIARIOS POR TIPO DISCAPACIDAD ┃" + ANSI_RESET);
-    System.out.println(ANSI_CYAN + "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫" + ANSI_RESET);
-    for (int i = 0; i < tiposCount; i++) {
-        System.out.println("┃ " + tipos[i] + ": " + conteoDiscapacidades[i] + " beneficiarios");
+        System.out.println(ANSI_CYAN + "\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" + ANSI_RESET);
+        System.out.println(ANSI_CYAN + "┃  BENEFICIARIOS POR TIPO DISCAPACIDAD ┃" + ANSI_RESET);
+        System.out.println(ANSI_CYAN + "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫" + ANSI_RESET);
+        for (int i = 0; i < tiposCount; i++) {
+            System.out.println("┃ " + tipos[i] + ": " + conteoDiscapacidades[i] + " beneficiarios");
+        }
+        System.out.println(ANSI_CYAN + "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" + ANSI_RESET);
     }
-    System.out.println(ANSI_CYAN + "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" + ANSI_RESET);
-}
 
     private static void calcularMontoTotalPorPeriodo() {
         System.out.print(ANSI_BLUE + "Ingrese la fecha de inicio del período (DD/MM/AAAA): " + ANSI_RESET);
@@ -466,102 +462,13 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
         int tipo = obtenerOpcion();
         switch (tipo) {
             case 1:
-                if (numBonos[0] == 0) {
-                    System.out.println(ANSI_YELLOW + "No hay bonos registrados para borrar." + ANSI_RESET);
-                    return;
-                }
-                mostrarBonos();
-                System.out.print(ANSI_BLUE + "Ingrese el número del bono a borrar: " + ANSI_RESET);
-                try {
-                    int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-                    if (indice >= 0 && indice < numBonos[0]) {
-                        System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este bono? (S/N): " + ANSI_RESET);
-                        String confirmacion = lec.nextLine().trim().toUpperCase();
-                        if (confirmacion.startsWith("S")) {
-                            for (int i = indice; i < numBonos[0] - 1; i++) {
-                                bonos[i] = bonos[i + 1];
-                            }
-                            bonos[numBonos[0] - 1] = null;
-                            numBonos[0]--;
-                            System.out.println(ANSI_GREEN + "Bono y datos asociados eliminados exitosamente." + ANSI_RESET);
-                        } else {
-                            System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
-                        }
-                    } else {
-                        System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println(ANSI_YELLOW + "Entrada inválida." + ANSI_RESET);
-                }
+                borrarBonoConsola();
                 break;
             case 2:
-                if (numBeneficiarios[0] == 0) {
-                    System.out.println(ANSI_YELLOW + "No hay beneficiarios registrados para borrar." + ANSI_RESET);
-                    return;
-                }
-                mostrarBeneficiarios();
-                System.out.print(ANSI_BLUE + "Ingrese el número del beneficiario a borrar: " + ANSI_RESET);
-                try {
-                    int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-                    if (indice >= 0 && indice < numBeneficiarios[0]) {
-                        System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este beneficiario? (S/N): " + ANSI_RESET);
-                        String confirmacion = lec.nextLine().trim().toUpperCase();
-                        if (confirmacion.startsWith("S")) {
-                            for (int i = 0; i < numBonos[0]; i++) {
-                                for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                                    if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiarios[indice]) {
-                                        for (int k = j; k < bonos[i].getNumSolicitudes() - 1; k++) {
-                                            bonos[i].getRegisSoli()[k] = bonos[i].getRegisSoli()[k + 1];
-                                        }
-                                        bonos[i].getRegisSoli()[bonos[i].getNumSolicitudes() - 1] = null;
-                                        bonos[i].setNumSolicitudes(bonos[i].getNumSolicitudes() - 1);
-                                    }
-                                }
-                            }
-                            for (int i = indice; i < numBeneficiarios[0] - 1; i++) {
-                                beneficiarios[i] = beneficiarios[i + 1];
-                            }
-                            beneficiarios[numBeneficiarios[0] - 1] = null;
-                            numBeneficiarios[0]--;
-                            System.out.println(ANSI_GREEN + "Beneficiario y solicitudes asociadas eliminados exitosamente." + ANSI_RESET);
-                        } else {
-                            System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
-                        }
-                    } else {
-                        System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println(ANSI_YELLOW + "Entrada inválida." + ANSI_RESET);
-                }
+                borrarBeneficiarioConsola();
                 break;
             case 3:
-                if (numAdministradores[0] == 0) {
-                    System.out.println(ANSI_YELLOW + "No hay administradores registrados para borrar." + ANSI_RESET);
-                    return;
-                }
-                mostrarAdministradores();
-                System.out.print(ANSI_BLUE + "Ingrese el número del administrador a borrar: " + ANSI_RESET);
-                try {
-                    int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
-                    if (indice >= 0 && indice < numAdministradores[0]) {
-                        System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este administrador? (S/N): " + ANSI_RESET);
-                        String confirmacion = lec.nextLine().trim().toUpperCase();
-                        if (confirmacion.startsWith("S")) {
-                            for (int i = indice; i < numAdministradores[0] - 1; i++) {
-                                administradores[i] = administradores[i + 1];
-                            }
-                            administradores[numAdministradores[0] - 1] = null;
-                            numAdministradores[0]--;
-                            System.out.println(ANSI_GREEN + "Administrador eliminado exitosamente." + ANSI_RESET);
-                        } else {
-                            System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
-                        }
-                    } else {
-                        System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println(ANSI_YELLOW + "Entrada inválida." + ANSI_RESET);
-                }
+                borrarAdministradorConsola();
                 break;
             default:
                 System.out.println(ANSI_YELLOW + "Opción no válida. Intente de nuevo." + ANSI_RESET);
@@ -615,8 +522,7 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                     return;
                 }
                 PagoBono pago = new PagoBono(fechaPago, monto, solicitud);
-                bono.agregarPago(pago);
-                solicitud.setPagada(true);
+                Persistencia.agregarPago(bono, pago, bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                 System.out.println(ANSI_GREEN + "Pago registrado exitosamente." + ANSI_RESET);
             } else {
                 System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
@@ -646,7 +552,7 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                     return null;
                 }
                 SolicitudBono solicitud = new SolicitudBono(fechaSolicitud, "Aprobada", beneficiarios[beneficiarioIndex]);
-                bono.agregarSolicitud(solicitud);
+                Persistencia.agregarSolicitud(bono, solicitud, bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                 return solicitud;
             } else {
                 System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
@@ -883,7 +789,6 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
         try {
             int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
             if (indice >= 0 && indice < numBonos[0]) {
-                BonoDignidad bono = bonos[indice];
                 System.out.print(ANSI_BLUE + "Nuevo tipo: " + ANSI_RESET);
                 String tipo = lec.nextLine().trim();
                 System.out.print(ANSI_BLUE + "Nueva fecha inicio (DD/MM/AAAA): " + ANSI_RESET);
@@ -896,7 +801,7 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                     System.out.println(ANSI_YELLOW + "Formato de fecha inválido. Use DD/MM/AAAA." + ANSI_RESET);
                     return;
                 }
-                bono = new BonoDignidad(tipo, fechaIni, fechaFin, monto);
+                BonoDignidad bono = new BonoDignidad(tipo, fechaIni, fechaFin, monto);
                 if (numBeneficiarios[0] > 0) {
                     System.out.println(ANSI_YELLOW + "\n--- Seleccione un Beneficiario (0 para ninguno) ---" + ANSI_RESET);
                     for (int i = 0; i < numBeneficiarios[0]; i++) {
@@ -906,10 +811,10 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                     int beneficiarioIndex = Integer.parseInt(lec.nextLine().trim()) - 1;
                     if (beneficiarioIndex >= 0 && beneficiarioIndex < numBeneficiarios[0]) {
                         SolicitudBono solicitud = new SolicitudBono(fechaIni, "Aprobada", beneficiarios[beneficiarioIndex]);
-                        bono.agregarSolicitud(solicitud);
+                        Persistencia.agregarSolicitud(bono, solicitud, bonos, numBonos, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                     }
                 }
-                bonos[indice] = bono;
+                Persistencia.editarBono(bonos, numBonos, indice, bono, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                 System.out.println(ANSI_GREEN + "Bono editado exitosamente." + ANSI_RESET);
             } else {
                 System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
@@ -929,7 +834,6 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
         try {
             int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
             if (indice >= 0 && indice < numBeneficiarios[0]) {
-                Beneficiario beneficiario = beneficiarios[indice];
                 System.out.print(ANSI_BLUE + "Nuevo nombre: " + ANSI_RESET);
                 String nombre = lec.nextLine().trim();
                 System.out.print(ANSI_BLUE + "Nueva CI: " + ANSI_RESET);
@@ -948,7 +852,8 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                     System.out.println(ANSI_YELLOW + "Formato de fecha inválido. Use DD/MM/AAAA." + ANSI_RESET);
                     return;
                 }
-                beneficiarios[indice] = new Beneficiario(nombre, ci, edad, direccion, fechaNac, tipoDisc, gradoDisc);
+                Beneficiario beneficiario = new Beneficiario(nombre, ci, edad, direccion, fechaNac, tipoDisc, gradoDisc);
+                Persistencia.editarBeneficiario(beneficiarios, numBeneficiarios, indice, beneficiario, bonos, numBonos, administradores, numAdministradores);
                 System.out.println(ANSI_GREEN + "Beneficiario editado exitosamente." + ANSI_RESET);
             } else {
                 System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
@@ -968,7 +873,6 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
         try {
             int indice = Integer.parseInt(lec.nextLine().trim()) - 1;
             if (indice >= 0 && indice < numAdministradores[0]) {
-                Administrador administrador = administradores[indice];
                 System.out.print(ANSI_BLUE + "Nuevo ID: " + ANSI_RESET);
                 String id = lec.nextLine().trim();
                 System.out.print(ANSI_BLUE + "Nuevo cargo: " + ANSI_RESET);
@@ -985,7 +889,8 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                     System.out.println(ANSI_YELLOW + "Formato de fecha inválido. Use DD/MM/AAAA." + ANSI_RESET);
                     return;
                 }
-                administradores[indice] = new Administrador(id, cargo, contacto, fechaCreacion, nombre, ci);
+                Administrador administrador = new Administrador(id, cargo, contacto, fechaCreacion, nombre, ci);
+                Persistencia.editarAdministrador(administradores, numAdministradores, indice, administrador, bonos, numBonos, beneficiarios, numBeneficiarios);
                 System.out.println(ANSI_GREEN + "Administrador editado exitosamente." + ANSI_RESET);
             } else {
                 System.out.println(ANSI_YELLOW + "Índice inválido." + ANSI_RESET);
@@ -1008,11 +913,7 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                 System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este bono? (S/N): " + ANSI_RESET);
                 String confirmacion = lec.nextLine().trim().toUpperCase();
                 if (confirmacion.startsWith("S")) {
-                    for (int i = indice; i < numBonos[0] - 1; i++) {
-                        bonos[i] = bonos[i + 1];
-                    }
-                    bonos[numBonos[0] - 1] = null;
-                    numBonos[0]--;
+                    Persistencia.borrarBono(bonos, numBonos, indice, beneficiarios, numBeneficiarios, administradores, numAdministradores);
                     System.out.println(ANSI_GREEN + "Bono eliminado exitosamente." + ANSI_RESET);
                 } else {
                     System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
@@ -1038,22 +939,7 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                 System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este beneficiario? (S/N): " + ANSI_RESET);
                 String confirmacion = lec.nextLine().trim().toUpperCase();
                 if (confirmacion.startsWith("S")) {
-                    for (int i = 0; i < numBonos[0]; i++) {
-                        for (int j = 0; j < bonos[i].getNumSolicitudes(); j++) {
-                            if (bonos[i].getRegisSoli()[j].getBeneficiario() == beneficiarios[indice]) {
-                                for (int k = j; k < bonos[i].getNumSolicitudes() - 1; k++) {
-                                    bonos[i].getRegisSoli()[k] = bonos[i].getRegisSoli()[k + 1];
-                                }
-                                bonos[i].getRegisSoli()[bonos[i].getNumSolicitudes() - 1] = null;
-                                bonos[i].setNumSolicitudes(bonos[i].getNumSolicitudes() - 1);
-                            }
-                        }
-                    }
-                    for (int i = indice; i < numBeneficiarios[0] - 1; i++) {
-                        beneficiarios[i] = beneficiarios[i + 1];
-                    }
-                    beneficiarios[numBeneficiarios[0] - 1] = null;
-                    numBeneficiarios[0]--;
+                    Persistencia.borrarBeneficiario(beneficiarios, numBeneficiarios, indice, bonos, numBonos, administradores, numAdministradores);
                     System.out.println(ANSI_GREEN + "Beneficiario y solicitudes asociadas eliminados exitosamente." + ANSI_RESET);
                 } else {
                     System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
@@ -1079,11 +965,7 @@ private static void mostrarBeneficiariosPorTipoDiscapacidad() {
                 System.out.print(ANSI_YELLOW + "¿Está seguro de borrar este administrador? (S/N): " + ANSI_RESET);
                 String confirmacion = lec.nextLine().trim().toUpperCase();
                 if (confirmacion.startsWith("S")) {
-                    for (int i = indice; i < numAdministradores[0] - 1; i++) {
-                        administradores[i] = administradores[i + 1];
-                    }
-                    administradores[numAdministradores[0] - 1] = null;
-                    numAdministradores[0]--;
+                    Persistencia.borrarAdministrador(administradores, numAdministradores, indice, bonos, numBonos, beneficiarios, numBeneficiarios);
                     System.out.println(ANSI_GREEN + "Administrador eliminado exitosamente." + ANSI_RESET);
                 } else {
                     System.out.println(ANSI_YELLOW + "Operación de borrado cancelada." + ANSI_RESET);
